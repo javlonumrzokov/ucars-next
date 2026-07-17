@@ -1,0 +1,85 @@
+{
+  "layout": {
+    "brand": "Ucar Admin",
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "vehicles": "Vehicles",
+    "articles": "Articles",
+    "role": "Admin",
+    "backToSite": "Back to site"
+  },
+  "dashboard": {
+    "totalUsers": "Total Users",
+    "totalVehicles": "Total Vehicles",
+    "totalArticles": "Total Articles",
+    "quickLinks": "Quick Links",
+    "quickLinksSubtitle": "Manage your platform from the sidebar.",
+    "manageUsers": "Manage Users",
+    "manageVehicles": "Manage Vehicles",
+    "manageArticles": "Manage Articles",
+    "viewSite": "View Site ↗"
+  },
+  "enums": {
+    "role": {
+      "USER": "User",
+      "DEALER": "Dealer",
+      "ADMIN": "Admin"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "searchPlaceholder": "Search name or email…",
+    "search": "Search",
+    "allRoles": "All roles",
+    "userCount": "{{count}} user",
+    "userCount_other": "{{count}} users",
+    "noUsersFound": "No users found.",
+    "colName": "Name",
+    "colEmail": "Email",
+    "colRole": "Role",
+    "colJoined": "Joined",
+    "colActions": "Actions",
+    "you": "(you)",
+    "delete": "Delete",
+    "deleteConfirm": "Delete user \"{{name}}\"? This cannot be undone.",
+    "prev": "← Prev",
+    "next": "Next →"
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "searchPlaceholder": "Search brand or model…",
+    "search": "Search",
+    "allStatuses": "All statuses",
+    "vehicleCount": "{{count}} vehicle",
+    "vehicleCount_other": "{{count}} vehicles",
+    "noVehiclesFound": "No vehicles found.",
+    "colVehicle": "Vehicle",
+    "colPrice": "Price",
+    "colStatus": "Status",
+    "colViewsLikes": "Views / Likes",
+    "colListed": "Listed",
+    "colActions": "Actions",
+    "delete": "Delete",
+    "deleteConfirm": "Permanently delete \"{{name}}\"? This cannot be undone.",
+    "prev": "← Prev",
+    "next": "Next →"
+  },
+  "articles": {
+    "title": "Articles",
+    "searchPlaceholder": "Search by title…",
+    "search": "Search",
+    "articleCount": "{{count}} article",
+    "articleCount_other": "{{count}} articles",
+    "noArticlesFound": "No articles found.",
+    "colTitle": "Title",
+    "colAuthorId": "Author ID",
+    "colViewsLikes": "Views / Likes",
+    "colPublished": "Published",
+    "colActions": "Actions",
+    "view": "View",
+    "delete": "Delete",
+    "deleteConfirm": "Delete article \"{{title}}\"? This cannot be undone.",
+    "prev": "← Prev",
+    "next": "Next →"
+  }
+}

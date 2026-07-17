@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next/pages';
 
 export default function Footer() {
+  const { t } = useTranslation('common');
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -10,30 +12,30 @@ export default function Footer() {
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-sm font-bold text-white dark:bg-white dark:text-zinc-900">
                 U
               </span>
-              <span className="text-lg font-semibold">Ucar</span>
+              <span className="text-lg font-semibold">{t('brand')}</span>
             </div>
             <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
-              Buy and sell new and used cars.
+              {t('footer.tagline')}
             </p>
           </div>
-          <FooterCol title="Explore" links={[
-            { href: '/products', label: 'Products' },
-            { href: '/blog', label: 'Blog' },
-            { href: '/help', label: 'Help' },
+          <FooterCol title={t('footer.explore')} links={[
+            { href: '/products', label: t('navbar.products') },
+            { href: '/blog', label: t('navbar.blog') },
+            { href: '/help', label: t('navbar.help') },
           ]} />
-          <FooterCol title="Account" links={[
-            { href: '/login', label: 'Login' },
-            { href: '/signup', label: 'Sign up' },
-            { href: '/mypage', label: 'My Page' },
+          <FooterCol title={t('footer.account')} links={[
+            { href: '/login', label: t('navbar.login') },
+            { href: '/signup', label: t('navbar.signup') },
+            { href: '/mypage', label: t('navbar.myPageDefault') },
           ]} />
-          <FooterCol title="Company" links={[
-            { href: '#', label: 'About' },
-            { href: '#', label: 'Contact' },
-            { href: '#', label: 'Terms' },
+          <FooterCol title={t('footer.company')} links={[
+            { href: '#', label: t('footer.about') },
+            { href: '#', label: t('footer.contact') },
+            { href: '#', label: t('footer.terms') },
           ]} />
         </div>
         <div className="mt-10 border-t border-zinc-200 pt-6 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-          © {new Date().getFullYear()} Ucar. All rights reserved.
+          {t('footer.copyright', { year: new Date().getFullYear() })}
         </div>
       </div>
     </footer>

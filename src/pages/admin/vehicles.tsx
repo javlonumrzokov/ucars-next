@@ -1,7 +1,12 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
+import { formatDate, toBcp47 } from '@/lib/date-format';
 import {
   ADMIN_CHANGE_VEHICLE_STATUS_MUTATION,
   ADMIN_DELETE_VEHICLE_MUTATION,
@@ -23,12 +28,8 @@ interface AdminVehicle {
   createdAt: string;
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-function formatPrice(value: number) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+function formatPrice(value: number, locale?: string) {
+  return new Intl.NumberFormat(toBcp47(locale), { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 }
 
 const statusBadge: Record<VehicleStatus, string> = {
@@ -38,6 +39,9 @@ const statusBadge: Record<VehicleStatus, string> = {
 };
 
 export default function AdminVehiclesPage() {
+  const { t } = useTranslation('admin');
+  const { t: tp } = useTranslation('products');
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -72,12 +76,12 @@ export default function AdminVehiclesPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
+    if (!confirm(t('vehicles.deleteConfirm', { name }))) return;
     await deleteVehicle({ variables: { id } });
   };
 
   return (
-    <AdminLayout title="Vehicles">
+    <AdminLayout title={t('vehicles.title')}>
       {/* Filters */}
       <div className="mb-4 flex flex-wrap gap-3">
         <form onSubmit={handleSearch} className="flex gap-2">
@@ -85,12 +89,12 @@ export default function AdminVehiclesPage() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search brand or model…"
+            placeholder={t('vehicles.searchPlaceholder')}
             className="h-9 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
           />
           <button type="submit"
             className="h-9 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900">
-            Search
+            {t('vehicles.search')}
           </button>
         </form>
         <select
@@ -98,15 +102,15 @@ export default function AdminVehiclesPage() {
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
           className="h-9 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
         >
-          <option value="">All statuses</option>
-          {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+          <option value="">{t('vehicles.allStatuses')}</option>
+          {STATUSES.map((s) => <option key={s} value={s}>{tp(`enums.status.${s}`, { defaultValue: s })}</option>)}
         </select>
       </div>
 
       {/* Table */}
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">{total} vehicle{total !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">{t('vehicles.vehicleCount', { count: total })}</p>
         </div>
 
         {loading ? (
@@ -121,18 +125,18 @@ export default function AdminVehiclesPage() {
             ))}
           </div>
         ) : vehicles.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-zinc-400">No vehicles found.</p>
+          <p className="px-5 py-10 text-center text-sm text-zinc-400">{t('vehicles.noVehiclesFound')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-zinc-100 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:border-zinc-800">
-                  <th className="px-5 py-3">Vehicle</th>
-                  <th className="px-5 py-3">Price</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Views / Likes</th>
-                  <th className="px-5 py-3">Listed</th>
-                  <th className="px-5 py-3">Actions</th>
+                  <th className="px-5 py-3">{t('vehicles.colVehicle')}</th>
+                  <th className="px-5 py-3">{t('vehicles.colPrice')}</th>
+                  <th className="px-5 py-3">{t('vehicles.colStatus')}</th>
+                  <th className="px-5 py-3">{t('vehicles.colViewsLikes')}</th>
+                  <th className="px-5 py-3">{t('vehicles.colListed')}</th>
+                  <th className="px-5 py-3">{t('vehicles.colActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -143,26 +147,26 @@ export default function AdminVehiclesPage() {
                         {v.vehicleBrand} {v.vehicleModel}
                       </Link>
                     </td>
-                    <td className="px-5 py-3 text-zinc-600 dark:text-zinc-400">{formatPrice(v.vehiclePrice)}</td>
+                    <td className="px-5 py-3 text-zinc-600 dark:text-zinc-400">{formatPrice(v.vehiclePrice, router.locale)}</td>
                     <td className="px-5 py-3">
                       <select
                         value={v.vehicleStatus}
                         onChange={(e) => handleStatusChange(v._id, e.target.value as VehicleStatus)}
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold outline-none ${statusBadge[v.vehicleStatus]}`}
                       >
-                        {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                        {STATUSES.map((s) => <option key={s} value={s}>{tp(`enums.status.${s}`, { defaultValue: s })}</option>)}
                       </select>
                     </td>
                     <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">
                       {v.vehicleViews} / {v.vehicleLikes}
                     </td>
-                    <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">{formatDate(v.createdAt)}</td>
+                    <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">{formatDate(v.createdAt, router.locale)}</td>
                     <td className="px-5 py-3">
                       <button
                         onClick={() => handleDelete(v._id, `${v.vehicleBrand} ${v.vehicleModel}`)}
                         className="rounded-lg px-3 py-1 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
-                        Delete
+                        {t('vehicles.delete')}
                       </button>
                     </td>
                   </tr>
@@ -177,15 +181,19 @@ export default function AdminVehiclesPage() {
         <div className="mt-4 flex items-center justify-center gap-2">
           <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700">
-            ← Prev
+            {t('vehicles.prev')}
           </button>
           <span className="text-sm text-zinc-500">{page} / {totalPages}</span>
           <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700">
-            Next →
+            {t('vehicles.next')}
           </button>
         </div>
       )}
     </AdminLayout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['admin', 'products'])) },
+});

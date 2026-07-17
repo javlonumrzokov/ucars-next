@@ -1,6 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { useEffect, useRef, useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import Container from '@/components/ui/Container';
@@ -45,12 +48,13 @@ function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' | 'lg'
 }
 
 function UserCard({ user }: { user: UserPublicInfo }) {
+  const { t: ta } = useTranslation('admin');
   return (
     <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
       <Avatar name={user.name} size="sm" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-zinc-900 dark:text-white">{user.name}</p>
-        <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">{user.role}</p>
+        <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">{ta(`enums.role.${user.role}`, { defaultValue: user.role })}</p>
       </div>
       <FollowButton userId={user._id} size="sm" />
     </div>
@@ -92,6 +96,7 @@ function EmptyState({ msg }: { msg: string }) {
 // ─── Create Article Form ───────────────────────────────────────────────────────
 
 function CreateArticleForm({ onDone }: { onDone: () => void }) {
+  const { t } = useTranslation('mypage');
   const [form, setForm] = useState({ title: '', content: '', tags: '' });
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -118,7 +123,7 @@ function CreateArticleForm({ onDone }: { onDone: () => void }) {
       const data = await res.json();
       setCoverImage(`${API_BASE_URL}${data.url}`);
     } catch {
-      setError('Image upload failed. Please try again.');
+      setError(t('articleForm.uploadFailed'));
     } finally {
       setUploading(false);
     }
@@ -156,12 +161,12 @@ function CreateArticleForm({ onDone }: { onDone: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Title *</label>
-        <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Article title" className={field} />
+        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('articleForm.titleLabel')}</label>
+        <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={t('articleForm.titlePlaceholder')} className={field} />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Cover Image</label>
+        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('articleForm.coverLabel')}</label>
         {coverImage ? (
           <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -174,7 +179,7 @@ function CreateArticleForm({ onDone }: { onDone: () => void }) {
               <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" />
               </svg>
-              Remove
+              {t('articleForm.remove')}
             </button>
           </div>
         ) : (
@@ -185,7 +190,7 @@ function CreateArticleForm({ onDone }: { onDone: () => void }) {
               <path d="M4 16l4-4a3 3 0 014.24 0L16 16m-2-2l1.59-1.59a3 3 0 014.24 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {uploading ? 'Uploading…' : 'Click to select a cover image from device'}
+              {uploading ? t('articleForm.uploading') : t('articleForm.clickToSelectCover')}
             </span>
             <input type="file" accept="image/*" disabled={uploading} onChange={handleCoverChange} className="hidden" />
           </label>
@@ -193,19 +198,19 @@ function CreateArticleForm({ onDone }: { onDone: () => void }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Tags (comma-separated)</label>
-        <input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="tips, buying-guide, ev" className={field} />
+        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('articleForm.tagsLabel')}</label>
+        <input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder={t('articleForm.tagsPlaceholder')} className={field} />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
-          Content *
-          <span className="ml-1 font-normal text-zinc-400">— press Enter twice to start a new paragraph</span>
+          {t('articleForm.contentLabel')}
+          <span className="ml-1 font-normal text-zinc-400">{t('articleForm.contentHint')}</span>
         </label>
-        <textarea required rows={12} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} placeholder="Write your article here...&#10;&#10;Start a new paragraph by pressing Enter twice." className={`${field} resize-y leading-relaxed`} />
+        <textarea required rows={12} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} placeholder={t('articleForm.contentPlaceholder')} className={`${field} resize-y leading-relaxed`} />
       </div>
       {error && <p className="text-xs text-red-500">{error}</p>}
       <button type="submit" disabled={loading || uploading} className="rounded-xl bg-zinc-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200">
-        {loading ? 'Publishing…' : 'Publish Article'}
+        {loading ? t('articleForm.publishing') : t('articleForm.publish')}
       </button>
     </form>
   );
@@ -220,6 +225,8 @@ const VEHICLE_GEARBOXES = ['AUTOMATIC','MANUAL','CVT'];
 const VEHICLE_CATEGORIES = ['NEW','USED'];
 
 function CreateVehicleForm({ onDone }: { onDone: () => void }) {
+  const { t } = useTranslation('mypage');
+  const { t: tp } = useTranslation('products');
   const [form, setForm] = useState({
     vehicleCategory: 'NEW', vehicleType: 'SUV', vehicleBrand: 'BMW',
     vehicleGearbox: 'AUTOMATIC', vehicleFuel: 'PETROL',
@@ -255,7 +262,7 @@ function CreateVehicleForm({ onDone }: { onDone: () => void }) {
       }
       setUploadedImages((prev) => [...prev, ...urls]);
     } catch {
-      setError('Image upload failed. Please try again.');
+      setError(t('vehicleForm.uploadFailed'));
     } finally {
       setUploading(false);
     }
@@ -267,7 +274,7 @@ function CreateVehicleForm({ onDone }: { onDone: () => void }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!uploadedImages.length) { setError('Please upload at least one image.'); return; }
+    if (!uploadedImages.length) { setError(t('vehicleForm.needOneImage')); return; }
     setError('');
     try {
       await createVehicle({
@@ -295,45 +302,49 @@ function CreateVehicleForm({ onDone }: { onDone: () => void }) {
   }
 
   const field = 'w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-white';
-  const sel = (key: string, opts: string[]) => (
+  const sel = (key: string, opts: string[], enumNs?: string) => (
     <select value={(form as Record<string, string>)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className={field}>
-      {opts.map((o) => <option key={o} value={o}>{o}</option>)}
+      {opts.map((o) => (
+        <option key={o} value={o}>
+          {enumNs ? tp(`enums.${enumNs}.${o}`, { defaultValue: o }) : o}
+        </option>
+      ))}
     </select>
   );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Category</label>{sel('vehicleCategory', VEHICLE_CATEGORIES)}</div>
-        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Type</label>{sel('vehicleType', VEHICLE_TYPES)}</div>
-        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Brand</label>{sel('vehicleBrand', VEHICLE_BRANDS)}</div>
-        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Gearbox</label>{sel('vehicleGearbox', VEHICLE_GEARBOXES)}</div>
-        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Fuel</label>{sel('vehicleFuel', VEHICLE_FUELS)}</div>
+        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.category')}</label>{sel('vehicleCategory', VEHICLE_CATEGORIES, 'category')}</div>
+        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.type')}</label>{sel('vehicleType', VEHICLE_TYPES, 'type')}</div>
+        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.brand')}</label>{sel('vehicleBrand', VEHICLE_BRANDS)}</div>
+        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.gearbox')}</label>{sel('vehicleGearbox', VEHICLE_GEARBOXES, 'gearbox')}</div>
+        <div><label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.fuel')}</label>{sel('vehicleFuel', VEHICLE_FUELS, 'fuel')}</div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Model *</label>
-          <input required value={form.vehicleModel} onChange={(e) => setForm({ ...form, vehicleModel: e.target.value })} placeholder="e.g. X5, Golf GTI" className={field} />
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.modelLabel')}</label>
+          <input required value={form.vehicleModel} onChange={(e) => setForm({ ...form, vehicleModel: e.target.value })} placeholder={t('vehicleForm.modelPlaceholder')} className={field} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Address *</label>
-          <input required value={form.vehicleAddress} onChange={(e) => setForm({ ...form, vehicleAddress: e.target.value })} placeholder="New York, NY" className={field} />
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.addressLabel')}</label>
+          <input required value={form.vehicleAddress} onChange={(e) => setForm({ ...form, vehicleAddress: e.target.value })} placeholder={t('vehicleForm.addressPlaceholder')} className={field} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Price (USD) *</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.priceLabel')}</label>
           <input required type="number" min="0" value={form.vehiclePrice} onChange={(e) => setForm({ ...form, vehiclePrice: e.target.value })} placeholder="35000" className={field} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Mileage (km) *</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.mileageLabel')}</label>
           <input required type="number" min="0" value={form.vehicleMileage} onChange={(e) => setForm({ ...form, vehicleMileage: e.target.value })} placeholder="0" className={field} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Made Year *</label>
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.yearLabel')}</label>
           <input required type="number" min="1990" max="2030" value={form.vehicleMadeYear} onChange={(e) => setForm({ ...form, vehicleMadeYear: e.target.value })} placeholder="2024" className={field} />
         </div>
       </div>
 
       <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
-          Photos * <span className="text-zinc-400">(select multiple)</span>
+          {t('vehicleForm.photosLabel')} <span className="text-zinc-400">{t('vehicleForm.photosHint')}</span>
         </label>
         <label className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 transition ${
           uploading ? 'border-zinc-300 opacity-60' : 'border-zinc-300 hover:border-zinc-500 dark:border-zinc-700 dark:hover:border-zinc-500'
@@ -342,7 +353,7 @@ function CreateVehicleForm({ onDone }: { onDone: () => void }) {
             <path d="M4 16l4-4a3 3 0 014.24 0L16 16m-2-2l1.59-1.59a3 3 0 014.24 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <span className="text-sm text-zinc-500 dark:text-zinc-400">
-            {uploading ? 'Uploading…' : 'Click to select photos from device'}
+            {uploading ? t('vehicleForm.uploading') : t('vehicleForm.clickToSelectPhotos')}
           </span>
           <input type="file" accept="image/*" multiple disabled={uploading} onChange={handleImageChange} className="hidden" />
         </label>
@@ -369,12 +380,12 @@ function CreateVehicleForm({ onDone }: { onDone: () => void }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">Description</label>
-        <textarea rows={4} value={form.vehicleDesc} onChange={(e) => setForm({ ...form, vehicleDesc: e.target.value })} placeholder="Describe the vehicle..." className={`${field} resize-y`} />
+        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">{t('vehicleForm.descriptionLabel')}</label>
+        <textarea rows={4} value={form.vehicleDesc} onChange={(e) => setForm({ ...form, vehicleDesc: e.target.value })} placeholder={t('vehicleForm.descriptionPlaceholder')} className={`${field} resize-y`} />
       </div>
       {error && <p className="text-xs text-red-500">{error}</p>}
       <button type="submit" disabled={loading || uploading} className="rounded-xl bg-zinc-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200">
-        {loading ? 'Listing…' : 'List Vehicle'}
+        {loading ? t('vehicleForm.listing') : t('vehicleForm.listVehicle')}
       </button>
     </form>
   );
@@ -405,6 +416,8 @@ function NavIcon({ path }: { path: string }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function MyPage() {
+  const { t } = useTranslation('mypage');
+  const { t: ta } = useTranslation('admin');
   const router = useRouter();
   const { user, loading: authLoading, isAuthenticated, logout } = useAuth();
   const [tab, setTab] = useState<Tab>('liked');
@@ -446,7 +459,7 @@ export default function MyPage() {
     return (
       <Layout>
         <Container className="py-20">
-          <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">Loading…</p>
+          <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">{t('loading')}</p>
         </Container>
       </Layout>
     );
@@ -472,49 +485,49 @@ export default function MyPage() {
   const navItems: NavItem[] = [
     {
       id: 'liked',
-      label: 'Liked',
+      label: t('nav.liked'),
       count: likedVehicles.length + likedArticles.length,
       icon: <NavIcon path="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />,
     },
     {
       id: 'recent',
-      label: 'Recent Views',
+      label: t('nav.recentViews'),
       count: recentViews.length,
       icon: <NavIcon path="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 5v5l4 2-1 1.73-5-3V7h2z" />,
     },
     {
       id: 'followers',
-      label: 'Followers',
+      label: t('nav.followers'),
       count: followersCount,
       icon: <NavIcon path="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />,
     },
     {
       id: 'following',
-      label: 'Following',
+      label: t('nav.following'),
       count: followingCount,
       icon: <NavIcon path="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />,
     },
     {
       id: 'my-articles',
-      label: 'My Articles',
+      label: t('nav.myArticles'),
       count: myArticles.length,
       icon: <NavIcon path="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" />,
     },
     {
       id: 'write-article',
-      label: 'Write Article',
+      label: t('nav.writeArticle'),
       icon: <NavIcon path="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />,
     },
     {
       id: 'my-vehicles',
-      label: 'My Vehicles',
+      label: t('nav.myVehicles'),
       count: myVehicles.length,
       dealerOnly: true,
       icon: <NavIcon path="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3M13 17l4-4 4 4M17 13v8M9 17H7a2 2 0 01-2-2v-2" />,
     },
     {
       id: 'add-vehicle',
-      label: 'Add Vehicle',
+      label: t('nav.addVehicle'),
       dealerOnly: true,
       icon: <NavIcon path="M12 5v14M5 12h14" />,
     },
@@ -534,17 +547,17 @@ export default function MyPage() {
                 <Avatar name={user.name} size="lg" />
                 <h1 className="mt-3 text-base font-bold text-zinc-900 dark:text-white">{user.name}</h1>
                 <span className="mt-1 rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-                  {user.role}
+                  {ta(`enums.role.${user.role}`, { defaultValue: user.role })}
                 </span>
                 <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 truncate w-full">{user.email}</p>
                 <div className="mt-3 flex justify-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
                   <button onClick={() => setTab('followers')} className="flex flex-col items-center hover:text-zinc-900 dark:hover:text-white">
                     <span className="text-base font-bold text-zinc-900 dark:text-white">{followersCount}</span>
-                    <span>followers</span>
+                    <span>{t('followersLabel')}</span>
                   </button>
                   <button onClick={() => setTab('following')} className="flex flex-col items-center hover:text-zinc-900 dark:hover:text-white">
                     <span className="text-base font-bold text-zinc-900 dark:text-white">{followingCount}</span>
-                    <span>following</span>
+                    <span>{t('followingLabel')}</span>
                   </button>
                 </div>
               </div>
@@ -552,7 +565,7 @@ export default function MyPage() {
                 onClick={logout}
                 className="mt-4 w-full rounded-xl border border-zinc-300 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
               >
-                Log out
+                {t('logout')}
               </button>
             </div>
 
@@ -613,10 +626,10 @@ export default function MyPage() {
               <Avatar name={user.name} size="md" />
               <div className="min-w-0 flex-1">
                 <h1 className="truncate text-base font-bold text-zinc-900 dark:text-white">{user.name}</h1>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">{user.role} · {user.email}</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">{ta(`enums.role.${user.role}`, { defaultValue: user.role })} · {user.email}</p>
               </div>
               <button onClick={logout} className="shrink-0 rounded-xl border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">
-                Log out
+                {t('logout')}
               </button>
             </div>
 
@@ -624,7 +637,7 @@ export default function MyPage() {
             {tab === 'followers' && (
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {followers.length === 0
-                  ? <EmptyState msg="No followers yet." />
+                  ? <EmptyState msg={t('empty.noFollowers')} />
                   : followers.map((f) => <UserCard key={f._id} user={f.user} />)}
               </div>
             )}
@@ -633,7 +646,7 @@ export default function MyPage() {
             {tab === 'following' && (
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {following.length === 0
-                  ? <EmptyState msg="You're not following anyone yet." />
+                  ? <EmptyState msg={t('empty.notFollowingAnyone')} />
                   : following.map((f) => <UserCard key={f._id} user={f.user} />)}
               </div>
             )}
@@ -643,21 +656,21 @@ export default function MyPage() {
               <div className="space-y-8">
                 <section>
                   <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                    Liked Vehicles ({likedVehicles.length})
+                    {t('sections.likedVehicles', { count: likedVehicles.length })}
                   </h2>
                   <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                     {likedVehicles.length === 0
-                      ? <EmptyState msg="No liked vehicles." />
+                      ? <EmptyState msg={t('empty.noLikedVehicles')} />
                       : likedVehicles.map((v) => <VehicleCard key={v._id} vehicle={v as Vehicle} />)}
                   </div>
                 </section>
                 <section>
                   <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                    Liked Articles ({likedArticles.length})
+                    {t('sections.likedArticles', { count: likedArticles.length })}
                   </h2>
                   <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                     {likedArticles.length === 0
-                      ? <EmptyState msg="No liked articles." />
+                      ? <EmptyState msg={t('empty.noLikedArticles')} />
                       : likedArticles.map((a) => <ArticleCard key={a._id} article={a as Article} />)}
                   </div>
                 </section>
@@ -668,7 +681,7 @@ export default function MyPage() {
             {tab === 'my-articles' && (
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {myArticles.length === 0
-                  ? <EmptyState msg="You haven't written any articles yet." />
+                  ? <EmptyState msg={t('empty.noArticlesWritten')} />
                   : myArticles.map((a) => <ArticleCard key={a._id} article={a as Article} />)}
               </div>
             )}
@@ -676,16 +689,16 @@ export default function MyPage() {
             {/* Write Article */}
             {tab === 'write-article' && (
               <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-                <h2 className="mb-6 text-lg font-semibold text-zinc-900 dark:text-white">Write a New Article</h2>
+                <h2 className="mb-6 text-lg font-semibold text-zinc-900 dark:text-white">{t('articleForm.writeNew')}</h2>
                 {articleDone ? (
                   <div className="text-center">
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Article published successfully!</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{t('articleForm.publishedSuccess')}</p>
                     <div className="mt-4 flex justify-center gap-3">
                       <button onClick={() => { setArticleDone(false); formKey.current++; }} className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-zinc-900">
-                        Write Another
+                        {t('articleForm.writeAnother')}
                       </button>
                       <button onClick={() => setTab('my-articles')} className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">
-                        View My Articles
+                        {t('articleForm.viewMyArticles')}
                       </button>
                     </div>
                   </div>
@@ -699,14 +712,14 @@ export default function MyPage() {
             {tab === 'recent' && (
               <div>
                 {recentViews.length === 0 ? (
-                  <EmptyState msg="No recently viewed items." />
+                  <EmptyState msg={t('empty.noRecentViews')} />
                 ) : (
                   <div className="space-y-8">
                     {/* Vehicle recent views as cards */}
                     {vehicleRecentIds.length > 0 && (
                       <section>
                         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                          Recently Viewed Vehicles
+                          {t('sections.recentVehicles')}
                         </h2>
                         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                           {recentViews
@@ -724,7 +737,7 @@ export default function MyPage() {
                     {articleRecentIds.length > 0 && (
                       <section>
                         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                          Recently Viewed Articles
+                          {t('sections.recentArticles')}
                         </h2>
                         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                           {recentViews
@@ -746,7 +759,7 @@ export default function MyPage() {
             {tab === 'my-vehicles' && isDealer && (
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {myVehicles.length === 0
-                  ? <EmptyState msg="You haven't listed any vehicles yet." />
+                  ? <EmptyState msg={t('empty.noVehiclesListed')} />
                   : myVehicles.map((v) => <VehicleCard key={v._id} vehicle={v as Vehicle} />)}
               </div>
             )}
@@ -754,16 +767,16 @@ export default function MyPage() {
             {/* Add Vehicle (dealer) */}
             {tab === 'add-vehicle' && isDealer && (
               <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-                <h2 className="mb-6 text-lg font-semibold text-zinc-900 dark:text-white">List a New Vehicle</h2>
+                <h2 className="mb-6 text-lg font-semibold text-zinc-900 dark:text-white">{t('vehicleForm.listNew')}</h2>
                 {vehicleDone ? (
                   <div className="text-center">
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Vehicle listed successfully!</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{t('vehicleForm.listedSuccess')}</p>
                     <div className="mt-4 flex justify-center gap-3">
                       <button onClick={() => { setVehicleDone(false); formKey.current++; }} className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-zinc-900">
-                        Add Another
+                        {t('vehicleForm.addAnother')}
                       </button>
                       <button onClick={() => setTab('my-vehicles')} className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">
-                        View My Vehicles
+                        {t('vehicleForm.viewMyVehicles')}
                       </button>
                     </div>
                   </div>
@@ -778,3 +791,9 @@ export default function MyPage() {
     </Layout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'en', ['common', 'chat', 'mypage', 'admin', 'products'])),
+  },
+});

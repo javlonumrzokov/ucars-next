@@ -1,0 +1,141 @@
+{
+  "hero": {
+    "title": "How can we help?",
+    "subtitle": "Browse frequently asked questions or get in touch with our team."
+  },
+  "topics": "Topics",
+  "categories": {
+    "buying": "Buying a Car",
+    "selling": "Selling a Car",
+    "account": "Account & Profile",
+    "search": "Search & Filters",
+    "safety": "Safety & Trust"
+  },
+  "faqs": {
+    "buying": [
+      {
+        "q": "How do I contact a seller about a vehicle?",
+        "a": "Open the vehicle detail page and click the \"Contact Dealer\" button. You can message the seller directly through our platform. You must be logged in to send messages."
+      },
+      {
+        "q": "Are the listed prices negotiable?",
+        "a": "Most prices are negotiable. We recommend contacting the seller directly to discuss. Our platform does not set or guarantee any pricing — all transactions are between buyer and seller."
+      },
+      {
+        "q": "Can I test drive a vehicle before buying?",
+        "a": "Yes — you can arrange a test drive directly with the seller. Always meet in a safe, public location and bring a valid driving licence."
+      },
+      {
+        "q": "What should I check before buying a used car?",
+        "a": "We recommend checking the vehicle history (VIN report), arranging a pre-purchase inspection by a qualified mechanic, verifying the title is clear, and confirming the seller's identity. Read our blog for a full used car checklist."
+      },
+      {
+        "q": "Does Ucar handle payments or financing?",
+        "a": "Currently Ucar is a marketplace platform — payments and financing are arranged directly between buyer and seller. We do not process transactions or offer financing at this time."
+      }
+    ],
+    "selling": [
+      {
+        "q": "How do I list my car on Ucar?",
+        "a": "You need a Dealer account to list vehicles. Sign up and select \"Dealer\" as your role. Once logged in, go to your dashboard and click \"Add Vehicle\". Fill in the details, upload photos, and publish."
+      },
+      {
+        "q": "How many photos should I upload?",
+        "a": "We recommend at least 5 photos: front, rear, both sides, and the interior. More photos lead to significantly more enquiries. Use good lighting and a clean background."
+      },
+      {
+        "q": "How long does a listing stay active?",
+        "a": "Listings remain active until you mark the vehicle as sold or delete the listing. There is no expiry date."
+      },
+      {
+        "q": "Can I edit my listing after publishing?",
+        "a": "Yes. Go to your dealer dashboard, find the listing, and click Edit. You can update price, description, photos, and status at any time."
+      },
+      {
+        "q": "How do I mark a vehicle as sold?",
+        "a": "In your dealer dashboard, open the vehicle listing and change its status to \"SOLD\". The listing will remain visible but clearly marked as sold."
+      }
+    ],
+    "account": [
+      {
+        "q": "What is the difference between a User and a Dealer account?",
+        "a": "User accounts are for buyers — you can browse, save favourites, like listings, and message sellers. Dealer accounts can do everything a User can, plus create and manage vehicle listings."
+      },
+      {
+        "q": "Can I change my account role after signing up?",
+        "a": "Role changes require contacting support. We're working on a self-service role upgrade flow — it will be available soon."
+      },
+      {
+        "q": "How do I update my profile information?",
+        "a": "Go to My Page from the navigation bar. Profile editing — including name, avatar, and contact details — will be available in an upcoming update."
+      },
+      {
+        "q": "I forgot my password. How do I reset it?",
+        "a": "Password reset via email is coming soon. In the meantime, please contact support at help@ucar.com and we'll assist you manually."
+      },
+      {
+        "q": "How do I delete my account?",
+        "a": "To request account deletion, email support@ucar.com with your registered email address. We will process your request within 5 business days."
+      }
+    ],
+    "search": [
+      {
+        "q": "How does the AI search work?",
+        "a": "Our AI search understands natural language. Instead of selecting individual filters, just describe what you're looking for — \"comfortable family SUV under $40,000\" or \"sporty German coupe automatic\". The AI extracts the relevant filters and finds matching vehicles instantly."
+      },
+      {
+        "q": "Can I combine AI search with manual filters?",
+        "a": "Yes. You can use the AI search bar for a natural language query, then refine further using the manual filter panel for brand, fuel type, gearbox, and price range."
+      },
+      {
+        "q": "Why is my search returning no results?",
+        "a": "Try broader terms — for example, search \"SUV\" instead of \"7-seat diesel SUV with panoramic roof\". You can also clear all filters and browse the full inventory, then narrow down from there."
+      },
+      {
+        "q": "Can I search for vehicles in a specific city?",
+        "a": "Yes — include the city name in your search query, e.g. \"Toyota SUV New York\". The AI will filter by location when it appears in vehicle listings."
+      },
+      {
+        "q": "How do I sort search results?",
+        "a": "Results are currently sorted by newest listing first. Sorting by price, mileage, and year is on our roadmap and will be available in a future update."
+      }
+    ],
+    "safety": [
+      {
+        "q": "How does Ucar verify sellers?",
+        "a": "All dealers must create an account with a valid email. We are building an identity verification system with document checks — this will be required for all dealer listings in a future update."
+      },
+      {
+        "q": "What should I do if I suspect a fraudulent listing?",
+        "a": "Do not send any money or personal documents to the seller. Report the listing by contacting us at report@ucar.com with the listing URL and a description of your concern. We will investigate within 24 hours."
+      },
+      {
+        "q": "Is my personal data safe?",
+        "a": "We store only what is necessary — your name, email, and role. Passwords are hashed with bcrypt and never stored in plain text. We do not sell your data to third parties."
+      },
+      {
+        "q": "Tips for a safe transaction",
+        "a": "Always meet in a public place, bring someone with you, never pay cash before inspecting the vehicle in person, and use a traceable payment method. Get all agreements in writing."
+      }
+    ]
+  },
+  "stillNeedHelp": "Still need help?",
+  "teamHere": "Our team is here for you.",
+  "contact": {
+    "emailSupport": "Email Support",
+    "emailReply": "We reply within 24 hours",
+    "liveChat": "Live Chat",
+    "comingSoon": "Coming soon",
+    "liveChatDesc": "Real-time chat support",
+    "blogGuides": "Blog & Guides",
+    "visitBlog": "Visit the blog",
+    "blogDesc": "Tips, guides & car advice"
+  },
+  "quickLinks": "Quick links",
+  "links": {
+    "browseVehicles": "Browse vehicles",
+    "readBlog": "Read the blog",
+    "createAccount": "Create an account",
+    "signIn": "Sign in"
+  }
+}

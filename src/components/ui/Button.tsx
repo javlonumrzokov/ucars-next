@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next/pages';
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -23,13 +24,14 @@ export default function Button({
   children,
   ...rest
 }: ButtonProps) {
+  const { t } = useTranslation('common');
   return (
     <button
       disabled={disabled || loading}
       className={`inline-flex h-11 items-center justify-center rounded-lg px-5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${styles[variant]} ${className}`}
       {...rest}
     >
-      {loading ? 'Please wait…' : children}
+      {loading ? t('button.pleaseWait') : children}
     </button>
   );
 }

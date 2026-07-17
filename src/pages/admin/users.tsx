@@ -1,6 +1,11 @@
 import { useMutation, useQuery } from '@apollo/client/react';
+import type { GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
+import { formatDate } from '@/lib/date-format';
 import {
   ADMIN_DELETE_USER_MUTATION,
   ADMIN_UPDATE_USER_ROLE_MUTATION,
@@ -19,10 +24,6 @@ interface AdminUser {
   createdAt: string;
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
 const roleBadge: Record<Role, string> = {
   USER: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300',
   DEALER: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
@@ -30,6 +31,8 @@ const roleBadge: Record<Role, string> = {
 };
 
 export default function AdminUsersPage() {
+  const { t } = useTranslation('admin');
+  const router = useRouter();
   const { user: me } = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -65,12 +68,12 @@ export default function AdminUsersPage() {
   };
 
   const handleDelete = async (userId: string, name: string) => {
-    if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
+    if (!confirm(t('users.deleteConfirm', { name }))) return;
     await deleteUser({ variables: { id: userId } });
   };
 
   return (
-    <AdminLayout title="Users">
+    <AdminLayout title={t('users.title')}>
       {/* Filters */}
       <div className="mb-4 flex flex-wrap gap-3">
         <form onSubmit={handleSearch} className="flex gap-2">
@@ -78,14 +81,14 @@ export default function AdminUsersPage() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search name or email…"
+            placeholder={t('users.searchPlaceholder')}
             className="h-9 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
           />
           <button
             type="submit"
             className="h-9 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900"
           >
-            Search
+            {t('users.search')}
           </button>
         </form>
         <select
@@ -93,15 +96,15 @@ export default function AdminUsersPage() {
           onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
           className="h-9 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
         >
-          <option value="">All roles</option>
-          {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+          <option value="">{t('users.allRoles')}</option>
+          {ROLES.map((r) => <option key={r} value={r}>{t(`enums.role.${r}`, { defaultValue: r })}</option>)}
         </select>
       </div>
 
       {/* Table */}
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">{total} user{total !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">{t('users.userCount', { count: total })}</p>
         </div>
 
         {loading ? (
@@ -115,17 +118,17 @@ export default function AdminUsersPage() {
             ))}
           </div>
         ) : users.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-zinc-400">No users found.</p>
+          <p className="px-5 py-10 text-center text-sm text-zinc-400">{t('users.noUsersFound')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-zinc-100 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:border-zinc-800">
-                  <th className="px-5 py-3">Name</th>
-                  <th className="px-5 py-3">Email</th>
-                  <th className="px-5 py-3">Role</th>
-                  <th className="px-5 py-3">Joined</th>
-                  <th className="px-5 py-3">Actions</th>
+                  <th className="px-5 py-3">{t('users.colName')}</th>
+                  <th className="px-5 py-3">{t('users.colEmail')}</th>
+                  <th className="px-5 py-3">{t('users.colRole')}</th>
+                  <th className="px-5 py-3">{t('users.colJoined')}</th>
+                  <th className="px-5 py-3">{t('users.colActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -134,7 +137,7 @@ export default function AdminUsersPage() {
                     <td className="px-5 py-3 font-medium text-zinc-900 dark:text-white">
                       {u.name}
                       {u._id === me?._id && (
-                        <span className="ml-2 text-xs text-zinc-400">(you)</span>
+                        <span className="ml-2 text-xs text-zinc-400">{t('users.you')}</span>
                       )}
                     </td>
                     <td className="px-5 py-3 text-zinc-600 dark:text-zinc-400">{u.email}</td>
@@ -145,17 +148,17 @@ export default function AdminUsersPage() {
                         onChange={(e) => handleRoleChange(u._id, e.target.value as Role)}
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold outline-none disabled:opacity-60 ${roleBadge[u.role]}`}
                       >
-                        {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                        {ROLES.map((r) => <option key={r} value={r}>{t(`enums.role.${r}`, { defaultValue: r })}</option>)}
                       </select>
                     </td>
-                    <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">{formatDate(u.createdAt)}</td>
+                    <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">{formatDate(u.createdAt, router.locale)}</td>
                     <td className="px-5 py-3">
                       <button
                         onClick={() => handleDelete(u._id, u.name)}
                         disabled={u._id === me?._id}
                         className="rounded-lg px-3 py-1 text-xs font-medium text-red-500 hover:bg-red-50 disabled:opacity-30 dark:hover:bg-red-900/20"
                       >
-                        Delete
+                        {t('users.delete')}
                       </button>
                     </td>
                   </tr>
@@ -171,15 +174,19 @@ export default function AdminUsersPage() {
         <div className="mt-4 flex items-center justify-center gap-2">
           <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700">
-            ← Prev
+            {t('users.prev')}
           </button>
           <span className="text-sm text-zinc-500">{page} / {totalPages}</span>
           <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700">
-            Next →
+            {t('users.next')}
           </button>
         </div>
       )}
     </AdminLayout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['admin'])) },
+});

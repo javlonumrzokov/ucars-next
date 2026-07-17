@@ -1,0 +1,73 @@
+{
+  "card": {
+    "noImage": "이미지 없음"
+  },
+  "enums": {
+    "category": {
+      "ALL": "전체",
+      "NEW": "신차",
+      "USED": "중고차"
+    },
+    "status": {
+      "ACTIVE": "판매중",
+      "SOLD": "판매완료",
+      "DELETE": "삭제됨"
+    },
+    "type": {
+      "SUV": "SUV",
+      "SEDAN": "세단",
+      "HATCHBACK": "해치백",
+      "COUPE": "쿠페",
+      "HYBRID": "하이브리드",
+      "CONVERTIBLE": "컨버터블",
+      "VAN": "밴",
+      "TRUCK": "트럭",
+      "ELECTRIC": "전기차"
+    },
+    "fuel": {
+      "PETROL": "가솔린",
+      "DIESEL": "디젤",
+      "GAS": "가스",
+      "EV": "전기",
+      "HYBRID": "하이브리드"
+    },
+    "gearbox": {
+      "AUTOMATIC": "자동",
+      "MANUAL": "수동",
+      "CVT": "CVT"
+    }
+  },
+  "list": {
+    "title": "차량 둘러보기",
+    "vehiclesFound": "차량 {{count}}대 검색됨",
+    "searchOrFilter": "검색하거나 필터를 사용해 차량을 찾아보세요",
+    "searchPlaceholder": "예: \"3만 달러 이하 도요타 SUV 자동\" 또는 \"2022년식 전기 세단\"",
+    "aiTag": "AI",
+    "filters": "필터",
+    "clearFilters": "필터 초기화",
+    "clearAll": "전체 초기화",
+    "category": "카테고리",
+    "type": "차종",
+    "brand": "브랜드",
+    "fuel": "연료",
+    "gearbox": "변속기",
+    "priceRange": "가격 범위 ($)",
+    "min": "최소",
+    "max": "최대",
+    "noVehiclesFound": "차량을 찾을 수 없습니다.",
+    "prev": "← 이전",
+    "next": "다음 →",
+    "pageOf": "{{totalPages}}페이지 중 {{page}}페이지"
+  },
+  "detail": {
+    "vehiclesBreadcrumb": "차량",
+    "noImageAvailable": "이미지를 사용할 수 없습니다",
+    "description": "상세 설명",
+    "mileage": "주행거리",
+    "year": "연식",
+    "views": "조회수 {{count}}회",
+    "messageDealer": "딜러에게 메시지 보내기",
+    "backToListings": "← 목록으로 돌아가기",
+    "notFound": "차량을 찾을 수 없습니다."
+  }
+}

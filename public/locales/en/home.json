@@ -1,0 +1,25 @@
+{
+  "badge": "Marketplace · New & Used",
+  "heroTitleLine1": "Find the car",
+  "heroTitleLine2": "you'll love.",
+  "heroSubtitle": "Browse thousands of verified listings from trusted dealers. Compare, chat, and buy — all in one place.",
+  "browseVehicles": "Browse vehicles",
+  "readBlog": "Read the blog",
+  "stats": {
+    "listings": "Listings",
+    "dealers": "Dealers",
+    "cities": "Cities"
+  },
+  "featuredTitle": "Featured vehicles",
+  "featuredSubtitle": "Hand-picked listings from this week.",
+  "viewAll": "View all →",
+  "noVehicles": "No vehicles yet. Check back soon.",
+  "features": {
+    "verifiedTitle": "Verified dealers",
+    "verifiedDesc": "Every dealer is reviewed before they can list a car.",
+    "chatTitle": "Real-time chat",
+    "chatDesc": "Message dealers instantly and negotiate with confidence.",
+    "followTitle": "Social follow",
+    "followDesc": "Follow dealers and favorite listings to keep tabs on prices."
+  }
+}

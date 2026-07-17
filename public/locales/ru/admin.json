@@ -1,0 +1,91 @@
+{
+  "layout": {
+    "brand": "Ucar Admin",
+    "dashboard": "Дашборд",
+    "users": "Пользователи",
+    "vehicles": "Автомобили",
+    "articles": "Статьи",
+    "role": "Админ",
+    "backToSite": "Вернуться на сайт"
+  },
+  "dashboard": {
+    "totalUsers": "Всего пользователей",
+    "totalVehicles": "Всего автомобилей",
+    "totalArticles": "Всего статей",
+    "quickLinks": "Быстрые ссылки",
+    "quickLinksSubtitle": "Управляйте платформой через боковую панель.",
+    "manageUsers": "Управление пользователями",
+    "manageVehicles": "Управление автомобилями",
+    "manageArticles": "Управление статьями",
+    "viewSite": "Открыть сайт ↗"
+  },
+  "enums": {
+    "role": {
+      "USER": "Пользователь",
+      "DEALER": "Дилер",
+      "ADMIN": "Админ"
+    }
+  },
+  "users": {
+    "title": "Пользователи",
+    "searchPlaceholder": "Поиск по имени или email…",
+    "search": "Поиск",
+    "allRoles": "Все роли",
+    "userCount_one": "{{count}} пользователь",
+    "userCount_few": "{{count}} пользователя",
+    "userCount_many": "{{count}} пользователей",
+    "userCount_other": "{{count}} пользователя",
+    "noUsersFound": "Пользователи не найдены.",
+    "colName": "Имя",
+    "colEmail": "Email",
+    "colRole": "Роль",
+    "colJoined": "Регистрация",
+    "colActions": "Действия",
+    "you": "(вы)",
+    "delete": "Удалить",
+    "deleteConfirm": "Удалить пользователя «{{name}}»? Это действие необратимо.",
+    "prev": "← Назад",
+    "next": "Далее →"
+  },
+  "vehicles": {
+    "title": "Автомобили",
+    "searchPlaceholder": "Поиск по марке или модели…",
+    "search": "Поиск",
+    "allStatuses": "Все статусы",
+    "vehicleCount_one": "{{count}} автомобиль",
+    "vehicleCount_few": "{{count}} автомобиля",
+    "vehicleCount_many": "{{count}} автомобилей",
+    "vehicleCount_other": "{{count}} автомобиля",
+    "noVehiclesFound": "Автомобили не найдены.",
+    "colVehicle": "Автомобиль",
+    "colPrice": "Цена",
+    "colStatus": "Статус",
+    "colViewsLikes": "Просмотры / Лайки",
+    "colListed": "Добавлено",
+    "colActions": "Действия",
+    "delete": "Удалить",
+    "deleteConfirm": "Безвозвратно удалить «{{name}}»? Это действие необратимо.",
+    "prev": "← Назад",
+    "next": "Далее →"
+  },
+  "articles": {
+    "title": "Статьи",
+    "searchPlaceholder": "Поиск по заголовку…",
+    "search": "Поиск",
+    "articleCount_one": "{{count}} статья",
+    "articleCount_few": "{{count}} статьи",
+    "articleCount_many": "{{count}} статей",
+    "articleCount_other": "{{count}} статьи",
+    "noArticlesFound": "Статьи не найдены.",
+    "colTitle": "Заголовок",
+    "colAuthorId": "ID автора",
+    "colViewsLikes": "Просмотры / Лайки",
+    "colPublished": "Опубликовано",
+    "colActions": "Действия",
+    "view": "Просмотр",
+    "delete": "Удалить",
+    "deleteConfirm": "Удалить статью «{{title}}»? Это действие необратимо.",
+    "prev": "← Назад",
+    "next": "Далее →"
+  }
+}

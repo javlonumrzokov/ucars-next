@@ -1,11 +1,15 @@
 import { useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import Layout from '@/components/layout/Layout';
 import Container from '@/components/ui/Container';
 import CommentSection from '@/components/ui/CommentSection';
 import FollowButton from '@/components/ui/FollowButton';
 import LikeButton from '@/components/ui/LikeButton';
+import { formatDate } from '@/lib/date-format';
 import { ARTICLE_QUERY } from '@/lib/graphql/queries';
 import type { Article } from '@/types';
 
@@ -13,15 +17,8 @@ interface ArticleData {
   article: Article;
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
 export default function BlogDetailPage() {
+  const { t } = useTranslation('blog');
   const router = useRouter();
   const { id } = router.query;
 
@@ -54,12 +51,12 @@ export default function BlogDetailPage() {
       <Layout>
         <Container className="max-w-3xl py-10">
           <div className="rounded-xl border border-dashed border-zinc-300 p-16 text-center dark:border-zinc-700">
-            <p className="text-zinc-500 dark:text-zinc-400">Article not found.</p>
+            <p className="text-zinc-500 dark:text-zinc-400">{t('detail.notFound')}</p>
             <Link
               href="/blog"
               className="mt-4 inline-block text-sm font-medium text-zinc-900 hover:underline dark:text-white"
             >
-              ← Back to blog
+              {t('detail.backToBlog')}
             </Link>
           </div>
         </Container>
@@ -75,7 +72,7 @@ export default function BlogDetailPage() {
         {/* Breadcrumb */}
         <nav className="mb-6 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
           <Link href="/blog" className="hover:text-zinc-900 dark:hover:text-white">
-            Blog
+            {t('detail.breadcrumb')}
           </Link>
           <span>/</span>
           <span className="line-clamp-1 text-zinc-900 dark:text-white">{a.title}</span>
@@ -115,9 +112,9 @@ export default function BlogDetailPage() {
 
         {/* Meta */}
         <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-          <span>{formatDate(a.createdAt)}</span>
+          <span>{formatDate(a.createdAt, router.locale, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
           <span>·</span>
-          <span>👁 {a.viewCount} views</span>
+          <span>👁 {t('detail.views', { count: a.viewCount })}</span>
           <LikeButton
             targetType="ARTICLE"
             targetId={a._id}
@@ -145,10 +142,19 @@ export default function BlogDetailPage() {
             href="/blog"
             className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
           >
-            ← Back to blog
+            {t('detail.backToBlog')}
           </Link>
         </div>
       </Container>
     </Layout>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: 'blocking',
+});
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['common', 'chat', 'blog'])) },
+});

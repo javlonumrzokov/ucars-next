@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
 import { useCallback, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import {
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function FollowButton({ userId, size = 'md', className = '' }: Props) {
+  const { t } = useTranslation('common');
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -89,7 +91,7 @@ export default function FollowButton({ userId, size = 'md', className = '' }: Pr
             <circle cx="9" cy="7" r="4" />
             <path d="M19 8l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Following
+          {t('social.following')}
         </>
       ) : (
         <>
@@ -98,7 +100,7 @@ export default function FollowButton({ userId, size = 'md', className = '' }: Pr
             <circle cx="9" cy="7" r="4" />
             <path d="M19 8v6M22 11h-6" strokeLinecap="round" />
           </svg>
-          Follow
+          {t('social.follow')}
         </>
       )}
     </button>

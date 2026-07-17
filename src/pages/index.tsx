@@ -1,5 +1,8 @@
 import { useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import Layout from '@/components/layout/Layout';
 import Container from '@/components/ui/Container';
 import VehicleCard from '@/components/ui/VehicleCard';
@@ -11,6 +14,7 @@ interface Data {
 }
 
 export default function HomePage() {
+  const { t } = useTranslation('home');
   const { data, loading } = useQuery<Data>(VEHICLES_QUERY, {
     variables: { inquiry: { page: 1, limit: 6, search: {} } },
   });
@@ -24,35 +28,34 @@ export default function HomePage() {
           <div className="grid items-center gap-10 lg:grid-cols-2">
             <div>
               <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-                Marketplace · New & Used
+                {t('badge')}
               </span>
               <h1 className="mt-5 text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl dark:text-white">
-                Find the car
+                {t('heroTitleLine1')}
                 <br />
-                <span className="text-zinc-500 dark:text-zinc-400">you&apos;ll love.</span>
+                <span className="text-zinc-500 dark:text-zinc-400">{t('heroTitleLine2')}</span>
               </h1>
               <p className="mt-5 max-w-lg text-base text-zinc-600 dark:text-zinc-400">
-                Browse thousands of verified listings from trusted dealers.
-                Compare, chat, and buy — all in one place.
+                {t('heroSubtitle')}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/products"
                   className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm font-semibold text-white transition hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
                 >
-                  Browse vehicles
+                  {t('browseVehicles')}
                 </Link>
                 <Link
                   href="/blog"
                   className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 px-6 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-900"
                 >
-                  Read the blog
+                  {t('readBlog')}
                 </Link>
               </div>
               <dl className="mt-10 grid max-w-md grid-cols-3 gap-6">
-                <Stat label="Listings" value="10k+" />
-                <Stat label="Dealers" value="500+" />
-                <Stat label="Cities" value="80+" />
+                <Stat label={t('stats.listings')} value="10k+" />
+                <Stat label={t('stats.dealers')} value="500+" />
+                <Stat label={t('stats.cities')} value="80+" />
               </dl>
             </div>
             <div className="relative hidden lg:block">
@@ -75,17 +78,17 @@ export default function HomePage() {
           <div className="mb-8 flex items-end justify-between">
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl dark:text-white">
-                Featured vehicles
+                {t('featuredTitle')}
               </h2>
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                Hand-picked listings from this week.
+                {t('featuredSubtitle')}
               </p>
             </div>
             <Link
               href="/products"
               className="hidden text-sm font-medium text-zinc-700 hover:text-zinc-900 sm:block dark:text-zinc-300 dark:hover:text-white"
             >
-              View all →
+              {t('viewAll')}
             </Link>
           </div>
 
@@ -100,7 +103,7 @@ export default function HomePage() {
             </div>
           ) : vehicles.length === 0 ? (
             <div className="rounded-xl border border-dashed border-zinc-300 p-12 text-center text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-              No vehicles yet. Check back soon.
+              {t('noVehicles')}
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -116,16 +119,16 @@ export default function HomePage() {
         <Container>
           <div className="grid gap-8 md:grid-cols-3">
             <Feature
-              title="Verified dealers"
-              description="Every dealer is reviewed before they can list a car."
+              title={t('features.verifiedTitle')}
+              description={t('features.verifiedDesc')}
             />
             <Feature
-              title="Real-time chat"
-              description="Message dealers instantly and negotiate with confidence."
+              title={t('features.chatTitle')}
+              description={t('features.chatDesc')}
             />
             <Feature
-              title="Social follow"
-              description="Follow dealers and favorite listings to keep tabs on prices."
+              title={t('features.followTitle')}
+              description={t('features.followDesc')}
             />
           </div>
         </Container>
@@ -133,6 +136,10 @@ export default function HomePage() {
     </Layout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['common', 'chat', 'home'])) },
+});
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (

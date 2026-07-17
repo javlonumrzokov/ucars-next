@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next/pages';
 import { InputHTMLAttributes, forwardRef, useState } from 'react';
 
 interface PasswordInputProps
@@ -8,6 +9,7 @@ interface PasswordInputProps
 
 const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ label, error, className = '', id, ...rest }, ref) => {
+    const { t } = useTranslation('common');
     const inputId = id ?? rest.name;
     const [visible, setVisible] = useState(false);
 
@@ -32,7 +34,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <button
             type="button"
             onClick={() => setVisible((v) => !v)}
-            aria-label={visible ? 'Hide password' : 'Show password'}
+            aria-label={visible ? t('passwordInput.hide') : t('passwordInput.show')}
             aria-pressed={visible}
             tabIndex={-1}
             className="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-zinc-500 transition hover:text-zinc-900 focus:outline-none focus-visible:text-zinc-900 dark:text-zinc-400 dark:hover:text-white dark:focus-visible:text-white"

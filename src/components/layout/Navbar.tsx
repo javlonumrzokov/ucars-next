@@ -1,20 +1,23 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import NotificationBell from '@/components/ui/NotificationBell';
-
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/products', label: 'Products' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/help', label: 'Help' },
-];
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 
 export default function Navbar() {
+  const { t } = useTranslation('common');
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
   const [open, setOpen] = useState(false);
+
+  const navLinks = [
+    { href: '/', label: t('navbar.home') },
+    { href: '/products', label: t('navbar.products') },
+    { href: '/blog', label: t('navbar.blog') },
+    { href: '/help', label: t('navbar.help') },
+  ];
 
   const isActive = (href: string) =>
     href === '/' ? router.pathname === '/' : router.pathname.startsWith(href);
@@ -26,7 +29,7 @@ export default function Navbar() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-sm font-bold text-white dark:bg-white dark:text-zinc-900">
             U
           </span>
-          <span className="text-lg font-semibold tracking-tight">Ucar</span>
+          <span className="text-lg font-semibold tracking-tight">{t('brand')}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -53,7 +56,7 @@ export default function Navbar() {
                   href="/admin"
                   className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                 >
-                  Admin
+                  {t('navbar.admin')}
                 </Link>
               )}
               <NotificationBell />
@@ -61,13 +64,13 @@ export default function Navbar() {
                 href="/mypage"
                 className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
               >
-                {user?.name ?? 'My Page'}
+                {user?.name ?? t('navbar.myPageDefault')}
               </Link>
               <button
                 onClick={logout}
                 className="rounded-md border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
               >
-                Logout
+                {t('navbar.logout')}
               </button>
             </>
           ) : (
@@ -76,23 +79,24 @@ export default function Navbar() {
                 href="/login"
                 className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
               >
-                Login
+                {t('navbar.login')}
               </Link>
               <Link
                 href="/signup"
                 className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
-                Sign up
+                {t('navbar.signup')}
               </Link>
             </>
           )}
+          <LanguageSwitcher className="ml-2 border-l border-zinc-200 pl-3 dark:border-zinc-800" />
         </div>
 
         <button
           type="button"
           className="inline-flex items-center justify-center rounded-md p-2 text-zinc-600 hover:bg-zinc-100 md:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle navigation"
+          aria-label={t('navbar.toggleNav')}
         >
           <svg
             viewBox="0 0 24 24"
@@ -138,7 +142,7 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className="block rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
                   >
-                    My Page
+                    {t('navbar.myPageDefault')}
                   </Link>
                   <button
                     onClick={() => {
@@ -147,7 +151,7 @@ export default function Navbar() {
                     }}
                     className="w-full rounded-md border border-zinc-200 px-3 py-2 text-left text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
                   >
-                    Logout
+                    {t('navbar.logout')}
                   </button>
                 </>
               ) : (
@@ -157,17 +161,18 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className="block rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
                   >
-                    Login
+                    {t('navbar.login')}
                   </Link>
                   <Link
                     href="/signup"
                     onClick={() => setOpen(false)}
                     className="block rounded-md bg-zinc-900 px-3 py-2 text-center text-sm font-medium text-white dark:bg-white dark:text-zinc-900"
                   >
-                    Sign up
+                    {t('navbar.signup')}
                   </Link>
                 </>
               )}
+              <LanguageSwitcher className="justify-center border-t border-zinc-200 pt-3 dark:border-zinc-800" />
             </div>
           </div>
         </div>

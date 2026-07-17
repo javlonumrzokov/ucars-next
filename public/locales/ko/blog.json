@@ -1,0 +1,20 @@
+{
+  "list": {
+    "title": "블로그",
+    "articlesCount": "게시글 {{count}}개",
+    "latestArticles": "최신 게시글과 가이드",
+    "searchPlaceholder": "게시글 검색…",
+    "clearTag": "태그 해제",
+    "noArticlesFound": "게시글을 찾을 수 없습니다.",
+    "clearFilters": "필터 초기화",
+    "prev": "← 이전",
+    "next": "다음 →",
+    "pageOf": "{{totalPages}}페이지 중 {{page}}페이지"
+  },
+  "detail": {
+    "breadcrumb": "블로그",
+    "notFound": "게시글을 찾을 수 없습니다.",
+    "backToBlog": "← 블로그로 돌아가기",
+    "views": "조회수 {{count}}회"
+  }
+}

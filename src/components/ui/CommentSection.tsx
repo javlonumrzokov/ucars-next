@@ -1,12 +1,15 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
 import { useCallback, useRef, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
+import { formatDate } from '@/lib/date-format';
 import {
   COMMENTS_QUERY,
   CREATE_COMMENT_MUTATION,
   DELETE_COMMENT_MUTATION,
 } from '@/lib/graphql/queries';
+import type { TFunction } from 'i18next';
 
 interface CommentAuthor {
   _id: string;
@@ -33,19 +36,20 @@ interface Props {
   targetId: string;
 }
 
-function timeAgo(iso: string) {
+function timeAgo(iso: string, t: TFunction, locale?: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('comments.justNow');
+  if (mins < 60) return t('comments.minutesAgo', { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  if (hrs < 24) return t('comments.hoursAgo', { count: hrs });
   const days = Math.floor(hrs / 24);
-  if (days < 30) return `${days}d ago`;
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if (days < 30) return t('comments.daysAgo', { count: days });
+  return formatDate(iso, locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 export default function CommentSection({ targetType, targetId }: Props) {
+  const { t } = useTranslation('common');
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -95,7 +99,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this comment?')) return;
+    if (!confirm(t('comments.deleteConfirm'))) return;
     await deleteComment({ variables: { id } });
   };
 
@@ -117,7 +121,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
   return (
     <div className="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
       <h2 className="mb-6 text-lg font-bold text-zinc-900 dark:text-white">
-        Comments{total > 0 && <span className="ml-2 text-sm font-normal text-zinc-500">({total})</span>}
+        {t('comments.title')}{total > 0 && <span className="ml-2 text-sm font-normal text-zinc-500">({total})</span>}
       </h2>
 
       {/* Comment form */}
@@ -125,7 +129,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
         {replyTo && (
           <div className="mb-2 flex items-center gap-2 rounded-lg bg-zinc-100 px-3 py-2 text-sm dark:bg-zinc-800">
             <span className="text-zinc-500 dark:text-zinc-400">
-              Replying to <span className="font-medium text-zinc-900 dark:text-white">{replyTo.name}</span>
+              {t('comments.replyingTo')} <span className="font-medium text-zinc-900 dark:text-white">{replyTo.name}</span>
             </span>
             <button
               type="button"
@@ -148,7 +152,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
               }
             }
           }}
-          placeholder={isAuthenticated ? 'Write a comment… (Enter to post, Shift+Enter for new line)' : 'Sign in to comment'}
+          placeholder={isAuthenticated ? t('comments.placeholderAuthed') : t('comments.placeholderGuest')}
           disabled={!isAuthenticated || submitting}
           rows={3}
           className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:ring-zinc-800"
@@ -160,7 +164,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
               onClick={() => router.push('/login')}
               className="text-sm text-zinc-500 underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
             >
-              Sign in to comment
+              {t('comments.signInToComment')}
             </button>
           )}
           <div className="ml-auto">
@@ -169,7 +173,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
               disabled={!isAuthenticated || submitting || !text.trim()}
               className="rounded-xl bg-zinc-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-zinc-700 disabled:opacity-40 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
-              {submitting ? 'Posting…' : 'Post'}
+              {submitting ? t('comments.posting') : t('comments.post')}
             </button>
           </div>
         </div>
@@ -187,7 +191,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
         </div>
       ) : topLevel.length === 0 ? (
         <p className="py-6 text-center text-sm text-zinc-400 dark:text-zinc-500">
-          No comments yet. Be the first!
+          {t('comments.noComments')}
         </p>
       ) : (
         <div className="space-y-6">
@@ -212,7 +216,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
             disabled={page === 1}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700"
           >
-            ← Prev
+            {t('comments.prev')}
           </button>
           <span className="text-sm text-zinc-500">
             {page} / {totalPages}
@@ -222,7 +226,7 @@ export default function CommentSection({ targetType, targetId }: Props) {
             disabled={page === totalPages}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700"
           >
-            Next →
+            {t('comments.next')}
           </button>
         </div>
       )}
@@ -280,6 +284,8 @@ function SingleComment({
   onDelete: (id: string) => void;
   isReply?: boolean;
 }) {
+  const { t } = useTranslation('common');
+  const router = useRouter();
   const initials = comment.author.name
     .split(' ')
     .map((w) => w[0])
@@ -300,7 +306,7 @@ function SingleComment({
             {comment.author.name}
           </span>
           <span className="text-xs text-zinc-400 dark:text-zinc-500">
-            {timeAgo(comment.createdAt)}
+            {timeAgo(comment.createdAt, t, router.locale)}
           </span>
         </div>
         <p className="mt-1 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
@@ -311,14 +317,14 @@ function SingleComment({
             onClick={() => onReply(comment)}
             className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
           >
-            Reply
+            {t('comments.reply')}
           </button>
           {isOwn && (
             <button
               onClick={() => onDelete(comment._id)}
               className="text-xs text-red-400 hover:text-red-600"
             >
-              Delete
+              {t('comments.delete')}
             </button>
           )}
         </div>

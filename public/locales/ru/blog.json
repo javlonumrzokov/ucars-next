@@ -1,0 +1,23 @@
+{
+  "list": {
+    "title": "Блог",
+    "articlesCount_one": "{{count}} статья",
+    "articlesCount_few": "{{count}} статьи",
+    "articlesCount_many": "{{count}} статей",
+    "articlesCount_other": "{{count}} статьи",
+    "latestArticles": "Последние статьи и руководства",
+    "searchPlaceholder": "Поиск статей…",
+    "clearTag": "Сбросить тег",
+    "noArticlesFound": "Статьи не найдены.",
+    "clearFilters": "Сбросить фильтры",
+    "prev": "← Назад",
+    "next": "Далее →",
+    "pageOf": "Страница {{page}} из {{totalPages}}"
+  },
+  "detail": {
+    "breadcrumb": "Блог",
+    "notFound": "Статья не найдена.",
+    "backToBlog": "← Назад в блог",
+    "views": "Просмотров: {{count}}"
+  }
+}

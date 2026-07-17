@@ -1,13 +1,15 @@
 import { ApolloProvider } from '@apollo/client/react';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import { appWithTranslation } from 'next-i18next/pages';
 import { useMemo } from 'react';
 import { AuthProvider } from '@/contexts/auth-context';
 import { ChatProvider } from '@/contexts/chat-context';
 import { getApolloClient } from '@/lib/apollo-client';
+import nextI18NextConfig from '../../next-i18next.config.js';
 import '@/styles/globals.css';
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   const client = useMemo(() => getApolloClient(), []);
   return (
     <ApolloProvider client={client}>
@@ -30,3 +32,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </ApolloProvider>
   );
 }
+
+export default appWithTranslation(App, nextI18NextConfig);

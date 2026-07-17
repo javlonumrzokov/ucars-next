@@ -1,10 +1,14 @@
 import { useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { useEffect, useRef, useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import Container from '@/components/ui/Container';
 import LikeButton from '@/components/ui/LikeButton';
+import { formatDate } from '@/lib/date-format';
 import { ARTICLES_QUERY } from '@/lib/graphql/queries';
 import type { Article, Paginated } from '@/types';
 
@@ -14,20 +18,13 @@ interface ArticlesData {
 
 const LIMIT = 9;
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
 function excerpt(content: string, max = 160) {
   const plain = content.replace(/<[^>]*>/g, '');
   return plain.length > max ? plain.slice(0, max).trimEnd() + '…' : plain;
 }
 
 export default function BlogPage() {
+  const { t } = useTranslation('blog');
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
@@ -73,10 +70,10 @@ export default function BlogPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
-            Blog
+            {t('list.title')}
           </h1>
           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            {total > 0 ? `${total} articles` : 'Latest articles and guides'}
+            {total > 0 ? t('list.articlesCount', { count: total }) : t('list.latestArticles')}
           </p>
         </div>
 
@@ -102,7 +99,7 @@ export default function BlogPage() {
                 searchRef.current?.focus();
               }
             }}
-            placeholder="Search articles…"
+            placeholder={t('list.searchPlaceholder')}
             className="w-full rounded-xl border border-zinc-300 bg-white py-3 pl-10 pr-4 text-sm text-zinc-900 shadow-sm placeholder-zinc-400 transition focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder-zinc-500 dark:focus:border-white dark:focus:ring-white/10"
           />
           {search && (
@@ -136,7 +133,7 @@ export default function BlogPage() {
                 onClick={() => setActiveTag('')}
                 className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
               >
-                Clear tag
+                {t('list.clearTag')}
               </button>
             )}
           </div>
@@ -156,13 +153,13 @@ export default function BlogPage() {
           </div>
         ) : articles.length === 0 ? (
           <div className="rounded-xl border border-dashed border-zinc-300 p-16 text-center dark:border-zinc-700">
-            <p className="text-zinc-500 dark:text-zinc-400">No articles found.</p>
+            <p className="text-zinc-500 dark:text-zinc-400">{t('list.noArticlesFound')}</p>
             {(activeSearch || activeTag) && (
               <button
                 onClick={() => { setSearch(''); setActiveSearch(''); setActiveTag(''); setPage(1); }}
                 className="mt-3 text-sm font-medium text-zinc-900 hover:underline dark:text-white"
               >
-                Clear filters
+                {t('list.clearFilters')}
               </button>
             )}
           </div>
@@ -182,17 +179,17 @@ export default function BlogPage() {
               onClick={() => setPage((p) => p - 1)}
               className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 disabled:opacity-40 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
-              ← Prev
+              {t('list.prev')}
             </button>
             <span className="text-sm text-zinc-600 dark:text-zinc-400">
-              Page {page} of {totalPages}
+              {t('list.pageOf', { page, totalPages })}
             </span>
             <button
               disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
               className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 disabled:opacity-40 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
-              Next →
+              {t('list.next')}
             </button>
           </div>
         )}
@@ -201,7 +198,12 @@ export default function BlogPage() {
   );
 }
 
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['common', 'chat', 'blog'])) },
+});
+
 function ArticleCard({ article }: { article: Article }) {
+  const router = useRouter();
   return (
     <Link
       href={`/blog/${article._id}`}
@@ -250,7 +252,7 @@ function ArticleCard({ article }: { article: Article }) {
 
         {/* Footer */}
         <div className="mt-4 flex items-center justify-between text-xs text-zinc-400 dark:text-zinc-500">
-          <span>{formatDate(article.createdAt)}</span>
+          <span>{formatDate(article.createdAt, router.locale)}</span>
           <div className="flex items-center gap-3">
             <span>👁 {article.viewCount}</span>
             <LikeButton

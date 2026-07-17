@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next/pages';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/contexts/auth-context';
@@ -10,6 +11,7 @@ import {
   MY_NOTIFICATIONS_QUERY,
   UNREAD_NOTIFICATION_COUNT_QUERY,
 } from '@/lib/graphql/queries';
+import type { TFunction } from 'i18next';
 
 interface NotificationActor {
   _id: string;
@@ -27,14 +29,14 @@ interface Notification {
   createdAt: string;
 }
 
-function timeAgo(iso: string) {
+function timeAgo(iso: string, t: TFunction) {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('comments.justNow');
+  if (mins < 60) return t('comments.minutesAgo', { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return t('comments.hoursAgo', { count: hrs });
+  return t('comments.daysAgo', { count: Math.floor(hrs / 24) });
 }
 
 function typeIcon(type: Notification['type']) {
@@ -85,6 +87,8 @@ function targetHref(n: Notification): string | null {
 }
 
 export default function NotificationBell() {
+  const { t } = useTranslation('chat');
+  const { t: tc } = useTranslation('common');
   const { isAuthenticated } = useAuth();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -181,7 +185,7 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={handleOpen}
-        aria-label="Notifications"
+        aria-label={t('notifications')}
         className="relative flex h-9 w-9 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
       >
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -200,13 +204,13 @@ export default function NotificationBell() {
         <div className="absolute right-0 top-11 z-50 w-80 rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900 sm:w-96">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-700">
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">Notifications</h3>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">{t('notifications')}</h3>
             {unread > 0 && (
               <button
                 onClick={handleMarkAll}
                 className="text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
               >
-                Mark all as read
+                {t('markAllRead')}
               </button>
             )}
           </div>
@@ -231,7 +235,7 @@ export default function NotificationBell() {
                   <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" />
                 </svg>
-                <p className="mt-3 text-sm text-zinc-400 dark:text-zinc-500">No notifications yet</p>
+                <p className="mt-3 text-sm text-zinc-400 dark:text-zinc-500">{t('noNotifications')}</p>
               </div>
             ) : (
               <ul>
@@ -251,7 +255,7 @@ export default function NotificationBell() {
                           {n.message}
                         </p>
                         <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
-                          {timeAgo(n.createdAt)}
+                          {timeAgo(n.createdAt, tc)}
                         </p>
                       </div>
                       {!n.read && (
@@ -280,7 +284,7 @@ export default function NotificationBell() {
           {notifications.length > 0 && (
             <div className="border-t border-zinc-200 px-4 py-2.5 dark:border-zinc-700">
               <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
-                Showing last 20 notifications
+                {t('showingLast20')}
               </p>
             </div>
           )}

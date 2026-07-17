@@ -1,0 +1,70 @@
+{
+  "brand": "Ucar",
+  "navbar": {
+    "home": "홈",
+    "products": "차량",
+    "blog": "블로그",
+    "help": "고객센터",
+    "admin": "관리자",
+    "myPageDefault": "마이페이지",
+    "logout": "로그아웃",
+    "login": "로그인",
+    "signup": "회원가입",
+    "toggleNav": "메뉴 열기/닫기"
+  },
+  "footer": {
+    "tagline": "신차와 중고차를 사고팔 수 있습니다.",
+    "explore": "둘러보기",
+    "account": "계정",
+    "company": "회사",
+    "about": "회사 소개",
+    "contact": "문의하기",
+    "terms": "이용약관",
+    "copyright": "© {{year}} Ucar. All rights reserved."
+  },
+  "button": {
+    "pleaseWait": "잠시만 기다려 주세요…"
+  },
+  "passwordInput": {
+    "show": "비밀번호 표시",
+    "hide": "비밀번호 숨기기"
+  },
+  "common": {
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "confirm": "확인",
+    "loading": "로딩 중…",
+    "error": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "backToSite": "사이트로 돌아가기"
+  },
+  "social": {
+    "like": "좋아요",
+    "unlike": "좋아요 취소",
+    "follow": "팔로우",
+    "following": "팔로잉"
+  },
+  "comments": {
+    "title": "댓글",
+    "replyingTo": "답글 작성 중",
+    "placeholderAuthed": "댓글을 입력하세요… (Enter로 등록, Shift+Enter로 줄바꿈)",
+    "placeholderGuest": "댓글을 작성하려면 로그인하세요",
+    "signInToComment": "댓글을 작성하려면 로그인하세요",
+    "posting": "등록 중…",
+    "post": "등록",
+    "noComments": "아직 댓글이 없습니다. 첫 댓글을 남겨보세요!",
+    "reply": "답글",
+    "delete": "삭제",
+    "deleteConfirm": "이 댓글을 삭제하시겠습니까?",
+    "prev": "← 이전",
+    "next": "다음 →",
+    "justNow": "방금 전",
+    "minutesAgo": "{{count}}분 전",
+    "hoursAgo": "{{count}}시간 전",
+    "daysAgo": "{{count}}일 전"
+  },
+  "meta": {
+    "title": "Ucar — 자동차 매매 플랫폼",
+    "description": "Ucar는 신차와 중고차를 사고파는 모던 자동차 마켓플레이스입니다."
+  }
+}

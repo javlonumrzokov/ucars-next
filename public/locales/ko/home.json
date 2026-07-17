@@ -1,0 +1,25 @@
+{
+  "badge": "마켓플레이스 · 신차 & 중고차",
+  "heroTitleLine1": "마음에 드는 차를",
+  "heroTitleLine2": "찾아보세요.",
+  "heroSubtitle": "신뢰할 수 있는 딜러의 검증된 매물을 둘러보세요. 비교하고, 채팅하고, 한 곳에서 구매하세요.",
+  "browseVehicles": "차량 둘러보기",
+  "readBlog": "블로그 보기",
+  "stats": {
+    "listings": "매물",
+    "dealers": "딜러",
+    "cities": "도시"
+  },
+  "featuredTitle": "추천 차량",
+  "featuredSubtitle": "이번 주에 엄선한 매물입니다.",
+  "viewAll": "전체보기 →",
+  "noVehicles": "아직 등록된 차량이 없습니다. 곧 다시 확인해 주세요.",
+  "features": {
+    "verifiedTitle": "검증된 딜러",
+    "verifiedDesc": "모든 딜러는 차량을 등록하기 전에 심사를 거칩니다.",
+    "chatTitle": "실시간 채팅",
+    "chatDesc": "딜러에게 바로 메시지를 보내고 자신 있게 협상하세요.",
+    "followTitle": "소셜 팔로우",
+    "followDesc": "딜러와 관심 매물을 팔로우하고 가격 변동을 확인하세요."
+  }
+}

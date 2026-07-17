@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
 import { useCallback, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { HAS_LIKED_QUERY, LIKE_MUTATION, UNLIKE_MUTATION } from '@/lib/graphql/queries';
@@ -22,6 +23,7 @@ export default function LikeButton({
   size = 'sm',
   className = '',
 }: Props) {
+  const { t } = useTranslation('common');
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -90,7 +92,7 @@ export default function LikeButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      aria-label={liked ? 'Unlike' : 'Like'}
+      aria-label={liked ? t('social.unlike') : t('social.like')}
       className={`flex items-center gap-1.5 transition-colors disabled:opacity-60 ${
         liked
           ? 'text-rose-500 hover:text-rose-600'

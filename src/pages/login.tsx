@@ -1,6 +1,9 @@
 import { useMutation } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { FormEvent, useEffect, useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import Button from '@/components/ui/Button';
@@ -17,6 +20,7 @@ interface LoginResponse {
 }
 
 export default function LoginPage() {
+  const { t } = useTranslation('auth');
   const router = useRouter();
   const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
@@ -48,9 +52,9 @@ export default function LoginPage() {
         router.push(next);
         return;
       }
-      setError('Login failed. Please try again.');
+      setError(t('login.genericError'));
     } catch (err) {
-      setError(getErrorMessage(err, 'Login failed'));
+      setError(getErrorMessage(err, t('login.genericError')));
     }
   }
 
@@ -60,10 +64,10 @@ export default function LoginPage() {
         <div className="mx-auto w-full max-w-md">
           <div className="text-center">
             <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
-              Welcome back
+              {t('login.title')}
             </h1>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-              Log in to continue to Ucar.
+              {t('login.subtitle')}
             </p>
           </div>
 
@@ -72,17 +76,17 @@ export default function LoginPage() {
             className="mt-8 space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
           >
             <Input
-              label="Email"
+              label={t('login.emailLabel')}
               name="email"
               type="email"
               autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder={t('login.emailPlaceholder')}
             />
             <PasswordInput
-              label="Password"
+              label={t('login.passwordLabel')}
               name="password"
               autoComplete="current-password"
               required
@@ -99,16 +103,16 @@ export default function LoginPage() {
             )}
 
             <Button type="submit" loading={loading} className="w-full">
-              Log in
+              {t('login.submit')}
             </Button>
 
             <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-              Don&apos;t have an account?{' '}
+              {t('login.noAccount')}{' '}
               <Link
                 href="/signup"
                 className="font-medium text-zinc-900 hover:underline dark:text-white"
               >
-                Sign up
+                {t('login.signupLink')}
               </Link>
             </p>
           </form>
@@ -117,3 +121,7 @@ export default function LoginPage() {
     </Layout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['common', 'chat', 'auth'])) },
+});

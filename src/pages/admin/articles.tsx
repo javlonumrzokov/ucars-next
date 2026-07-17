@@ -1,7 +1,12 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
+import { formatDate } from '@/lib/date-format';
 import {
   ADMIN_ARTICLES_QUERY,
   ADMIN_DELETE_ARTICLE_MUTATION,
@@ -16,11 +21,9 @@ interface AdminArticle {
   createdAt: string;
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
 export default function AdminArticlesPage() {
+  const { t } = useTranslation('admin');
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -47,12 +50,12 @@ export default function AdminArticlesPage() {
   };
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Delete article "${title}"? This cannot be undone.`)) return;
+    if (!confirm(t('articles.deleteConfirm', { title }))) return;
     await deleteArticle({ variables: { id } });
   };
 
   return (
-    <AdminLayout title="Articles">
+    <AdminLayout title={t('articles.title')}>
       {/* Filters */}
       <div className="mb-4 flex flex-wrap gap-3">
         <form onSubmit={handleSearch} className="flex gap-2">
@@ -60,12 +63,12 @@ export default function AdminArticlesPage() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search by title…"
+            placeholder={t('articles.searchPlaceholder')}
             className="h-9 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
           />
           <button type="submit"
             className="h-9 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900">
-            Search
+            {t('articles.search')}
           </button>
         </form>
       </div>
@@ -73,7 +76,7 @@ export default function AdminArticlesPage() {
       {/* Table */}
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">{total} article{total !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">{t('articles.articleCount', { count: total })}</p>
         </div>
 
         {loading ? (
@@ -87,17 +90,17 @@ export default function AdminArticlesPage() {
             ))}
           </div>
         ) : articles.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-zinc-400">No articles found.</p>
+          <p className="px-5 py-10 text-center text-sm text-zinc-400">{t('articles.noArticlesFound')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-zinc-100 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:border-zinc-800">
-                  <th className="px-5 py-3">Title</th>
-                  <th className="px-5 py-3">Author ID</th>
-                  <th className="px-5 py-3">Views / Likes</th>
-                  <th className="px-5 py-3">Published</th>
-                  <th className="px-5 py-3">Actions</th>
+                  <th className="px-5 py-3">{t('articles.colTitle')}</th>
+                  <th className="px-5 py-3">{t('articles.colAuthorId')}</th>
+                  <th className="px-5 py-3">{t('articles.colViewsLikes')}</th>
+                  <th className="px-5 py-3">{t('articles.colPublished')}</th>
+                  <th className="px-5 py-3">{t('articles.colActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -114,19 +117,19 @@ export default function AdminArticlesPage() {
                     <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">
                       {a.viewCount} / {a.likeCount}
                     </td>
-                    <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">{formatDate(a.createdAt)}</td>
+                    <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">{formatDate(a.createdAt, router.locale)}</td>
                     <td className="px-5 py-3 flex items-center gap-2">
                       <Link
                         href={`/blog/${a._id}`}
                         className="rounded-lg px-3 py-1 text-xs font-medium text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                       >
-                        View
+                        {t('articles.view')}
                       </Link>
                       <button
                         onClick={() => handleDelete(a._id, a.title)}
                         className="rounded-lg px-3 py-1 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
-                        Delete
+                        {t('articles.delete')}
                       </button>
                     </td>
                   </tr>
@@ -141,15 +144,19 @@ export default function AdminArticlesPage() {
         <div className="mt-4 flex items-center justify-center gap-2">
           <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700">
-            ← Prev
+            {t('articles.prev')}
           </button>
           <span className="text-sm text-zinc-500">{page} / {totalPages}</span>
           <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
             className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700">
-            Next →
+            {t('articles.next')}
           </button>
         </div>
       )}
     </AdminLayout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['admin'])) },
+});

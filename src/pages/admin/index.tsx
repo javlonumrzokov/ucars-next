@@ -1,5 +1,8 @@
 import { useQuery } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import AdminLayout from '@/components/layout/AdminLayout';
 import {
   ADMIN_ARTICLES_QUERY,
@@ -37,6 +40,7 @@ function StatCard({ label, value, icon, color, href }: StatCardProps) {
 }
 
 export default function AdminDashboard() {
+  const { t } = useTranslation('admin');
   const { data: usersData } = useQuery<{ adminUsers: { total: number } }>(ADMIN_USERS_QUERY, {
     variables: { page: 1, limit: 1 },
     fetchPolicy: 'network-only',
@@ -55,10 +59,10 @@ export default function AdminDashboard() {
   const totalArticles = articlesData?.adminArticles?.total ?? '…';
 
   return (
-    <AdminLayout title="Dashboard">
+    <AdminLayout title={t('layout.dashboard')}>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
-          label="Total Users"
+          label={t('dashboard.totalUsers')}
           value={totalUsers}
           href="/admin/users"
           color="bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
@@ -71,7 +75,7 @@ export default function AdminDashboard() {
           }
         />
         <StatCard
-          label="Total Vehicles"
+          label={t('dashboard.totalVehicles')}
           value={totalVehicles}
           href="/admin/vehicles"
           color="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
@@ -84,7 +88,7 @@ export default function AdminDashboard() {
           }
         />
         <StatCard
-          label="Total Articles"
+          label={t('dashboard.totalArticles')}
           value={totalArticles}
           href="/admin/articles"
           color="bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400"
@@ -100,14 +104,14 @@ export default function AdminDashboard() {
       </div>
 
       <div className="mt-8 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-        <h2 className="mb-1 text-sm font-semibold text-zinc-900 dark:text-white">Quick Links</h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Manage your platform from the sidebar.</p>
+        <h2 className="mb-1 text-sm font-semibold text-zinc-900 dark:text-white">{t('dashboard.quickLinks')}</h2>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">{t('dashboard.quickLinksSubtitle')}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {[
-            { href: '/admin/users', label: 'Manage Users' },
-            { href: '/admin/vehicles', label: 'Manage Vehicles' },
-            { href: '/admin/articles', label: 'Manage Articles' },
-            { href: '/', label: 'View Site ↗' },
+            { href: '/admin/users', label: t('dashboard.manageUsers') },
+            { href: '/admin/vehicles', label: t('dashboard.manageVehicles') },
+            { href: '/admin/articles', label: t('dashboard.manageArticles') },
+            { href: '/', label: t('dashboard.viewSite') },
           ].map((l) => (
             <Link
               key={l.href}
@@ -122,3 +126,7 @@ export default function AdminDashboard() {
     </AdminLayout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['admin'])) },
+});

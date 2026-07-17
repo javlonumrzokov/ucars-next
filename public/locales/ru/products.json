@@ -1,0 +1,73 @@
+{
+  "card": {
+    "noImage": "Нет фото"
+  },
+  "enums": {
+    "category": {
+      "ALL": "Все",
+      "NEW": "Новый",
+      "USED": "С пробегом"
+    },
+    "status": {
+      "ACTIVE": "В продаже",
+      "SOLD": "Продано",
+      "DELETE": "Удалено"
+    },
+    "type": {
+      "SUV": "Внедорожник",
+      "SEDAN": "Седан",
+      "HATCHBACK": "Хэтчбек",
+      "COUPE": "Купе",
+      "HYBRID": "Гибрид",
+      "CONVERTIBLE": "Кабриолет",
+      "VAN": "Минивэн",
+      "TRUCK": "Грузовик",
+      "ELECTRIC": "Электромобиль"
+    },
+    "fuel": {
+      "PETROL": "Бензин",
+      "DIESEL": "Дизель",
+      "GAS": "Газ",
+      "EV": "Электро",
+      "HYBRID": "Гибрид"
+    },
+    "gearbox": {
+      "AUTOMATIC": "Автомат",
+      "MANUAL": "Механика",
+      "CVT": "Вариатор"
+    }
+  },
+  "list": {
+    "title": "Автомобили",
+    "vehiclesFound": "Найдено автомобилей: {{count}}",
+    "searchOrFilter": "Ищите или фильтруйте, чтобы найти свой автомобиль",
+    "searchPlaceholder": "Например: «Toyota SUV автомат до $30 000» или «электрический седан 2022»",
+    "aiTag": "ИИ",
+    "filters": "Фильтры",
+    "clearFilters": "Сбросить фильтры",
+    "clearAll": "Сбросить всё",
+    "category": "Категория",
+    "type": "Тип",
+    "brand": "Марка",
+    "fuel": "Топливо",
+    "gearbox": "Коробка передач",
+    "priceRange": "Диапазон цены ($)",
+    "min": "От",
+    "max": "До",
+    "noVehiclesFound": "Автомобили не найдены.",
+    "prev": "← Назад",
+    "next": "Далее →",
+    "pageOf": "Страница {{page}} из {{totalPages}}"
+  },
+  "detail": {
+    "vehiclesBreadcrumb": "Автомобили",
+    "noImageAvailable": "Изображение недоступно",
+    "description": "Описание",
+    "mileage": "Пробег",
+    "year": "Год выпуска",
+    "views": "Просмотров: {{count}}",
+    "messageDealer": "Написать дилеру",
+    "backToListings": "← Назад к списку",
+    "notFound": "Автомобиль не найден."
+  }
+}

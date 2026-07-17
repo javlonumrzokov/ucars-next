@@ -1,0 +1,21 @@
+{
+  "list": {
+    "title": "Blog",
+    "articlesCount": "{{count}} article",
+    "articlesCount_other": "{{count}} articles",
+    "latestArticles": "Latest articles and guides",
+    "searchPlaceholder": "Search articles…",
+    "clearTag": "Clear tag",
+    "noArticlesFound": "No articles found.",
+    "clearFilters": "Clear filters",
+    "prev": "← Prev",
+    "next": "Next →",
+    "pageOf": "Page {{page}} of {{totalPages}}"
+  },
+  "detail": {
+    "breadcrumb": "Blog",
+    "notFound": "Article not found.",
+    "backToBlog": "← Back to blog",
+    "views": "{{count}} views"
+  }
+}

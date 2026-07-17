@@ -1,0 +1,22 @@
+{
+  "chats": "Чаты",
+  "communityChat": "Общий чат",
+  "joinCommunityChat": "Присоединиться к общему чату",
+  "joinCommunity": "Присоединиться",
+  "noChatsYet": "Пока нет чатов.",
+  "openChat": "Открыть чат",
+  "group": "Группа",
+  "unknown": "Неизвестно",
+  "membersCount": "Участников: {{count}}",
+  "private": "Личный",
+  "privateChat": "Личный чат",
+  "selectChat": "Выберите чат",
+  "selectChatHint": "Или присоединитесь к общему чату, чтобы начать",
+  "noMessagesYet": "Сообщений пока нет. Поздоровайтесь!",
+  "typeMessage": "Введите сообщение…",
+  "yesterday": "Вчера",
+  "notifications": "Уведомления",
+  "markAllRead": "Отметить всё как прочитанное",
+  "noNotifications": "Уведомлений пока нет",
+  "showingLast20": "Показаны последние 20 уведомлений"
+}

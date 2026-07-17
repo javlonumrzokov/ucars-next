@@ -1,0 +1,22 @@
+{
+  "chats": "Chats",
+  "communityChat": "Community Chat",
+  "joinCommunityChat": "Join Community Chat",
+  "joinCommunity": "Join Community",
+  "noChatsYet": "No chats yet.",
+  "openChat": "Open chat",
+  "group": "Group",
+  "unknown": "Unknown",
+  "membersCount": "{{count}} members",
+  "private": "Private",
+  "privateChat": "Private chat",
+  "selectChat": "Select a chat",
+  "selectChatHint": "Or join the Community Chat to get started",
+  "noMessagesYet": "No messages yet. Say hello!",
+  "typeMessage": "Type a message…",
+  "yesterday": "Yesterday",
+  "notifications": "Notifications",
+  "markAllRead": "Mark all as read",
+  "noNotifications": "No notifications yet",
+  "showingLast20": "Showing last 20 notifications"
+}

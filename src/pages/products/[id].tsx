@@ -1,6 +1,9 @@
 import { useQuery } from '@apollo/client/react';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import Container from '@/components/ui/Container';
@@ -9,6 +12,7 @@ import FollowButton from '@/components/ui/FollowButton';
 import LikeButton from '@/components/ui/LikeButton';
 import { useAuth } from '@/contexts/auth-context';
 import { useChat } from '@/contexts/chat-context';
+import { toBcp47 } from '@/lib/date-format';
 import { VEHICLE_QUERY } from '@/lib/graphql/queries';
 import type { Vehicle } from '@/types';
 
@@ -16,16 +20,16 @@ interface VehicleData {
   vehicle: Vehicle;
 }
 
-function formatPrice(value: number) {
-  return new Intl.NumberFormat('en-US', {
+function formatPrice(value: number, locale?: string) {
+  return new Intl.NumberFormat(toBcp47(locale), {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(value);
 }
 
-function formatMileage(value: number) {
-  return new Intl.NumberFormat('en-US').format(value) + ' km';
+function formatMileage(value: number, locale?: string) {
+  return new Intl.NumberFormat(toBcp47(locale)).format(value) + ' km';
 }
 
 const statusBadge: Record<string, string> = {
@@ -35,6 +39,7 @@ const statusBadge: Record<string, string> = {
 };
 
 export default function VehicleDetailPage() {
+  const { t } = useTranslation('products');
   const router = useRouter();
   const { id } = router.query;
   const [activeImage, setActiveImage] = useState(0);
@@ -68,12 +73,12 @@ export default function VehicleDetailPage() {
       <Layout>
         <Container className="py-10">
           <div className="rounded-xl border border-dashed border-zinc-300 p-16 text-center dark:border-zinc-700">
-            <p className="text-zinc-500 dark:text-zinc-400">Vehicle not found.</p>
+            <p className="text-zinc-500 dark:text-zinc-400">{t('detail.notFound')}</p>
             <Link
               href="/products"
               className="mt-4 inline-block text-sm font-medium text-zinc-900 hover:underline dark:text-white"
             >
-              ← Back to listings
+              {t('detail.backToListings')}
             </Link>
           </div>
         </Container>
@@ -90,7 +95,7 @@ export default function VehicleDetailPage() {
         {/* Breadcrumb */}
         <nav className="mb-6 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
           <Link href="/products" className="hover:text-zinc-900 dark:hover:text-white">
-            Vehicles
+            {t('detail.vehiclesBreadcrumb')}
           </Link>
           <span>/</span>
           <span className="text-zinc-900 dark:text-white">
@@ -112,15 +117,15 @@ export default function VehicleDetailPage() {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-zinc-400">
-                  No image available
+                  {t('detail.noImageAvailable')}
                 </div>
               )}
               <div className="absolute left-3 top-3 flex gap-2">
                 <span className="rounded-full bg-zinc-900/80 px-3 py-1 text-xs font-semibold text-white">
-                  {v.vehicleCategory}
+                  {t(`enums.category.${v.vehicleCategory}`, { defaultValue: v.vehicleCategory })}
                 </span>
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge[v.vehicleStatus] ?? statusBadge.ACTIVE}`}>
-                  {v.vehicleStatus}
+                  {t(`enums.status.${v.vehicleStatus}`, { defaultValue: v.vehicleStatus })}
                 </span>
               </div>
             </div>
@@ -149,7 +154,7 @@ export default function VehicleDetailPage() {
             {v.vehicleDesc && (
               <div className="mt-6">
                 <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                  Description
+                  {t('detail.description')}
                 </h2>
                 <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
                   {v.vehicleDesc}
@@ -166,20 +171,20 @@ export default function VehicleDetailPage() {
                 {v.vehicleBrand} {v.vehicleModel}
               </h1>
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                {v.vehicleType} · {v.vehicleMadeYear}
+                {t(`enums.type.${v.vehicleType}`, { defaultValue: v.vehicleType })} · {v.vehicleMadeYear}
               </p>
               <p className="mt-4 text-3xl font-bold text-zinc-900 dark:text-white">
-                {formatPrice(v.vehiclePrice)}
+                {formatPrice(v.vehiclePrice, router.locale)}
               </p>
 
               {/* Specs grid */}
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <Spec label="Fuel" value={v.vehicleFuel} />
-                <Spec label="Gearbox" value={v.vehicleGearbox} />
-                <Spec label="Mileage" value={formatMileage(v.vehicleMileage)} />
-                <Spec label="Year" value={String(v.vehicleMadeYear)} />
-                <Spec label="Type" value={v.vehicleType} />
-                <Spec label="Category" value={v.vehicleCategory} />
+                <Spec label={t('list.fuel')} value={t(`enums.fuel.${v.vehicleFuel}`, { defaultValue: v.vehicleFuel })} />
+                <Spec label={t('list.gearbox')} value={t(`enums.gearbox.${v.vehicleGearbox}`, { defaultValue: v.vehicleGearbox })} />
+                <Spec label={t('detail.mileage')} value={formatMileage(v.vehicleMileage, router.locale)} />
+                <Spec label={t('detail.year')} value={String(v.vehicleMadeYear)} />
+                <Spec label={t('list.type')} value={t(`enums.type.${v.vehicleType}`, { defaultValue: v.vehicleType })} />
+                <Spec label={t('list.category')} value={t(`enums.category.${v.vehicleCategory}`, { defaultValue: v.vehicleCategory })} />
               </div>
 
               {/* Location */}
@@ -193,7 +198,7 @@ export default function VehicleDetailPage() {
 
               {/* Stats */}
               <div className="mt-4 flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-                <span>👁 {v.vehicleViews} views</span>
+                <span>👁 {t('detail.views', { count: v.vehicleViews })}</span>
                 <LikeButton
                   targetType="VEHICLE"
                   targetId={v._id}
@@ -214,7 +219,7 @@ export default function VehicleDetailPage() {
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  Message Dealer
+                  {t('detail.messageDealer')}
                 </button>
                 <FollowButton userId={v.memberId} size="md" className="w-full justify-center" />
               </div>
@@ -223,7 +228,7 @@ export default function VehicleDetailPage() {
                 href="/products"
                 className="mt-3 flex items-center justify-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
               >
-                ← Back to listings
+                {t('detail.backToListings')}
               </Link>
             </div>
           </div>
@@ -235,6 +240,15 @@ export default function VehicleDetailPage() {
     </Layout>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: 'blocking',
+});
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['common', 'chat', 'products'])) },
+});
 
 function Spec({ label, value }: { label: string; value: string }) {
   return (

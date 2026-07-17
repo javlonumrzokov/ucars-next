@@ -1,0 +1,73 @@
+{
+  "card": {
+    "noImage": "No image"
+  },
+  "enums": {
+    "category": {
+      "ALL": "All",
+      "NEW": "New",
+      "USED": "Used"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "SOLD": "Sold",
+      "DELETE": "Deleted"
+    },
+    "type": {
+      "SUV": "SUV",
+      "SEDAN": "Sedan",
+      "HATCHBACK": "Hatchback",
+      "COUPE": "Coupe",
+      "HYBRID": "Hybrid",
+      "CONVERTIBLE": "Convertible",
+      "VAN": "Van",
+      "TRUCK": "Truck",
+      "ELECTRIC": "Electric"
+    },
+    "fuel": {
+      "PETROL": "Petrol",
+      "DIESEL": "Diesel",
+      "GAS": "Gas",
+      "EV": "Electric",
+      "HYBRID": "Hybrid"
+    },
+    "gearbox": {
+      "AUTOMATIC": "Automatic",
+      "MANUAL": "Manual",
+      "CVT": "CVT"
+    }
+  },
+  "list": {
+    "title": "Browse Vehicles",
+    "vehiclesFound": "{{count}} vehicles found",
+    "searchOrFilter": "Search or filter to find your car",
+    "searchPlaceholder": "Try \"Toyota SUV automatic under $30,000\" or \"electric sedan 2022\"",
+    "aiTag": "AI",
+    "filters": "Filters",
+    "clearFilters": "Clear filters",
+    "clearAll": "Clear all",
+    "category": "Category",
+    "type": "Type",
+    "brand": "Brand",
+    "fuel": "Fuel",
+    "gearbox": "Gearbox",
+    "priceRange": "Price Range ($)",
+    "min": "Min",
+    "max": "Max",
+    "noVehiclesFound": "No vehicles found.",
+    "prev": "← Prev",
+    "next": "Next →",
+    "pageOf": "Page {{page}} of {{totalPages}}"
+  },
+  "detail": {
+    "vehiclesBreadcrumb": "Vehicles",
+    "noImageAvailable": "No image available",
+    "description": "Description",
+    "mileage": "Mileage",
+    "year": "Year",
+    "views": "{{count}} views",
+    "messageDealer": "Message Dealer",
+    "backToListings": "← Back to listings",
+    "notFound": "Vehicle not found."
+  }
+}

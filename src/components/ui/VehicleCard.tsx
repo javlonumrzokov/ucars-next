@@ -1,5 +1,8 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
 import LikeButton from '@/components/ui/LikeButton';
+import { toBcp47 } from '@/lib/date-format';
 import type { Vehicle } from '@/types';
 
 const statusBadge: Record<string, string> = {
@@ -8,21 +11,26 @@ const statusBadge: Record<string, string> = {
   DELETE: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300',
 };
 
-function formatPrice(value: number) {
-  return new Intl.NumberFormat('en-US', {
+function formatPrice(value: number, locale?: string) {
+  return new Intl.NumberFormat(toBcp47(locale), {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(value);
 }
 
-function formatMileage(value: number) {
-  return new Intl.NumberFormat('en-US').format(value) + ' km';
+function formatMileage(value: number, locale?: string) {
+  return new Intl.NumberFormat(toBcp47(locale)).format(value) + ' km';
 }
 
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
+  const { t } = useTranslation('products');
+  const router = useRouter();
   const cover = vehicle.vehicleImages?.[0];
-  const label = vehicle.vehicleCategory === 'NEW' ? 'NEW' : vehicle.vehicleCategory === 'USED' ? 'USED' : '';
+  const label =
+    vehicle.vehicleCategory === 'NEW' || vehicle.vehicleCategory === 'USED'
+      ? t(`enums.category.${vehicle.vehicleCategory}`, { defaultValue: vehicle.vehicleCategory })
+      : '';
 
   return (
     <Link
@@ -39,7 +47,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-zinc-400">
-            No image
+            {t('card.noImage')}
           </div>
         )}
         <div className="absolute left-3 top-3 flex gap-1.5">
@@ -49,7 +57,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             </span>
           )}
           <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadge[vehicle.vehicleStatus] ?? statusBadge.ACTIVE}`}>
-            {vehicle.vehicleStatus}
+            {t(`enums.status.${vehicle.vehicleStatus}`, { defaultValue: vehicle.vehicleStatus })}
           </span>
         </div>
       </div>
@@ -60,7 +68,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             {vehicle.vehicleBrand} {vehicle.vehicleModel}
           </h3>
           <span className="shrink-0 text-base font-bold text-zinc-900 dark:text-white">
-            {formatPrice(vehicle.vehiclePrice)}
+            {formatPrice(vehicle.vehiclePrice, router.locale)}
           </span>
         </div>
 
@@ -75,7 +83,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           <span className="rounded-md bg-zinc-100 px-2 py-0.5 dark:bg-zinc-800">
             {vehicle.vehicleGearbox}
           </span>
-          <span className="ml-auto">{formatMileage(vehicle.vehicleMileage)}</span>
+          <span className="ml-auto">{formatMileage(vehicle.vehicleMileage, router.locale)}</span>
         </div>
 
         <div className="mt-3 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">

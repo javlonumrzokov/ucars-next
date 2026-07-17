@@ -1,6 +1,9 @@
 import { useMutation } from '@apollo/client/react';
 import Link from 'next/link';
+import type { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations';
 import { FormEvent, useEffect, useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import Button from '@/components/ui/Button';
@@ -17,6 +20,7 @@ interface SignupResponse {
 }
 
 export default function SignupPage() {
+  const { t } = useTranslation('auth');
   const router = useRouter();
   const { login, isAuthenticated } = useAuth();
   const [name, setName] = useState('');
@@ -45,9 +49,9 @@ export default function SignupPage() {
         router.push('/mypage');
         return;
       }
-      setError('Signup failed. Please try again.');
+      setError(t('signup.genericError'));
     } catch (err) {
-      setError(getErrorMessage(err, 'Signup failed'));
+      setError(getErrorMessage(err, t('signup.genericError')));
     }
   }
 
@@ -57,10 +61,10 @@ export default function SignupPage() {
         <div className="mx-auto w-full max-w-md">
           <div className="text-center">
             <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
-              Create your account
+              {t('signup.title')}
             </h1>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-              Join Ucar to buy, sell, and follow dealers.
+              {t('signup.subtitle')}
             </p>
           </div>
 
@@ -69,33 +73,33 @@ export default function SignupPage() {
             className="mt-8 space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
           >
             <Input
-              label="Name"
+              label={t('signup.nameLabel')}
               name="name"
               required
               minLength={2}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Jane Driver"
+              placeholder={t('signup.namePlaceholder')}
             />
             <Input
-              label="Email"
+              label={t('signup.emailLabel')}
               name="email"
               type="email"
               autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder={t('signup.emailPlaceholder')}
             />
             <PasswordInput
-              label="Password"
+              label={t('signup.passwordLabel')}
               name="password"
               autoComplete="new-password"
               required
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
+              placeholder={t('signup.passwordPlaceholder')}
             />
 
             <div className="space-y-1.5">
@@ -103,7 +107,7 @@ export default function SignupPage() {
                 htmlFor="role"
                 className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
               >
-                Account type
+                {t('signup.accountTypeLabel')}
               </label>
               <select
                 id="role"
@@ -111,8 +115,8 @@ export default function SignupPage() {
                 onChange={(e) => setRole(e.target.value as UserRole)}
                 className="block w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 shadow-sm transition focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
               >
-                <option value="USER">Buyer</option>
-                <option value="DEALER">Dealer</option>
+                <option value="USER">{t('signup.roleBuyer')}</option>
+                <option value="DEALER">{t('signup.roleDealer')}</option>
               </select>
             </div>
 
@@ -123,16 +127,16 @@ export default function SignupPage() {
             )}
 
             <Button type="submit" loading={loading} className="w-full">
-              Create account
+              {t('signup.submit')}
             </Button>
 
             <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-              Already have an account?{' '}
+              {t('signup.haveAccount')}{' '}
               <Link
                 href="/login"
                 className="font-medium text-zinc-900 hover:underline dark:text-white"
               >
-                Log in
+                {t('signup.loginLink')}
               </Link>
             </p>
           </form>
@@ -141,3 +145,7 @@ export default function SignupPage() {
     </Layout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? 'en', ['common', 'chat', 'auth'])) },
+});

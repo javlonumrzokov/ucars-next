@@ -1,0 +1,70 @@
+{
+  "brand": "Ucar",
+  "navbar": {
+    "home": "Home",
+    "products": "Products",
+    "blog": "Blog",
+    "help": "Help",
+    "admin": "Admin",
+    "myPageDefault": "My Page",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign up",
+    "toggleNav": "Toggle navigation"
+  },
+  "footer": {
+    "tagline": "Buy and sell new and used cars.",
+    "explore": "Explore",
+    "account": "Account",
+    "company": "Company",
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms",
+    "copyright": "© {{year}} Ucar. All rights reserved."
+  },
+  "button": {
+    "pleaseWait": "Please wait…"
+  },
+  "passwordInput": {
+    "show": "Show password",
+    "hide": "Hide password"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "loading": "Loading…",
+    "error": "Something went wrong. Please try again.",
+    "backToSite": "Back to site"
+  },
+  "social": {
+    "like": "Like",
+    "unlike": "Unlike",
+    "follow": "Follow",
+    "following": "Following"
+  },
+  "comments": {
+    "title": "Comments",
+    "replyingTo": "Replying to",
+    "placeholderAuthed": "Write a comment… (Enter to post, Shift+Enter for new line)",
+    "placeholderGuest": "Sign in to comment",
+    "signInToComment": "Sign in to comment",
+    "posting": "Posting…",
+    "post": "Post",
+    "noComments": "No comments yet. Be the first!",
+    "reply": "Reply",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this comment?",
+    "prev": "← Prev",
+    "next": "Next →",
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "meta": {
+    "title": "Ucar — Buy and sell cars",
+    "description": "Ucar is a modern marketplace for buying and selling new and used vehicles."
+  }
+}

@@ -1,14 +1,18 @@
 import { useMutation, useQuery } from '@apollo/client/react';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next/pages';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/contexts/auth-context';
 import { useChat, type ChatParticipant as Participant, type ChatRoom } from '@/contexts/chat-context';
 import { authStorage } from '@/lib/auth-storage';
+import { formatDate, formatTime } from '@/lib/date-format';
 import {
   MESSAGES_QUERY,
   MY_CHAT_ROOMS_QUERY,
   SEND_MESSAGE_MUTATION,
 } from '@/lib/graphql/queries';
+import type { TFunction } from 'i18next';
 
 interface Message {
   _id: string;
@@ -19,23 +23,23 @@ interface Message {
   createdAt: string;
 }
 
-function timeLabel(iso: string) {
+function timeLabel(iso: string, t: TFunction, locale?: string) {
   const d = new Date(iso);
   const now = new Date();
   const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000);
-  if (diffDays === 0) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  if (diffDays === 1) return 'Yesterday';
-  return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  if (diffDays === 0) return formatTime(d, locale);
+  if (diffDays === 1) return t('chat:yesterday');
+  return formatDate(d, locale, { month: 'short', day: 'numeric' });
 }
 
 function initials(name: string) {
   return name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 }
 
-function roomLabel(room: ChatRoom, myId: string) {
-  if (room.type === 'GROUP') return room.name ?? 'Group';
+function roomLabel(room: ChatRoom, myId: string, t: TFunction) {
+  if (room.type === 'GROUP') return room.name ?? t('chat:group');
   const other = room.participants.find((p) => p._id !== myId);
-  return other?.name ?? 'Unknown';
+  return other?.name ?? t('chat:unknown');
 }
 
 function roomInitials(room: ChatRoom, myId: string) {
@@ -56,6 +60,8 @@ function avatarColor(id: string) {
 }
 
 export default function ChatDrawer() {
+  const { t } = useTranslation('chat');
+  const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const { isOpen, activeRoomId, pendingRoom, roomMessages, setRoomMessages, appendMessage, openCommunityChat, openChat, closeChat, setPendingRoom } = useChat();
   const [localActiveId, setLocalActiveId] = useState<string | null>(null);
@@ -214,7 +220,7 @@ export default function ChatDrawer() {
               <path d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M15 3H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l4-4h4a2 2 0 002-2V5a2 2 0 00-2-2z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Community Chat
+            {t('communityChat')}
           </button>
         )}
 
@@ -222,7 +228,7 @@ export default function ChatDrawer() {
         <button
           onClick={() => isOpen ? closeChat() : openChat()}
           className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-900 text-white shadow-xl transition hover:scale-105 hover:bg-zinc-700 dark:bg-white dark:text-zinc-900"
-          aria-label="Open chat"
+          aria-label={t('openChat')}
         >
           {isOpen ? (
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -249,10 +255,10 @@ export default function ChatDrawer() {
           <div className="flex w-52 shrink-0 flex-col border-r border-zinc-100 dark:border-zinc-800">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-zinc-100 px-3 py-3 dark:border-zinc-800">
-              <span className="text-sm font-bold text-zinc-900 dark:text-white">Chats</span>
+              <span className="text-sm font-bold text-zinc-900 dark:text-white">{t('chats')}</span>
               <button
                 onClick={openCommunityChat}
-                title="Join Community Chat"
+                title={t('joinCommunityChat')}
                 className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-white"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -266,17 +272,17 @@ export default function ChatDrawer() {
             <div className="flex-1 overflow-y-auto">
               {rooms.length === 0 ? (
                 <div className="p-4 text-center">
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500">No chats yet.</p>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-500">{t('noChatsYet')}</p>
                   <button
                     onClick={openCommunityChat}
                     className="mt-2 text-xs font-medium text-zinc-700 underline dark:text-zinc-300"
                   >
-                    Join Community
+                    {t('joinCommunity')}
                   </button>
                 </div>
               ) : (
                 rooms.map((room) => {
-                  const label = roomLabel(room, user!._id);
+                  const label = roomLabel(room, user!._id, t);
                   const ri = roomInitials(room, user!._id);
                   const isGroup = room.type === 'GROUP';
                   const isActive = room._id === effectiveRoomId;
@@ -292,7 +298,7 @@ export default function ChatDrawer() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-xs font-semibold text-zinc-900 dark:text-white">{label}</p>
                         <p className="truncate text-[10px] text-zinc-400 dark:text-zinc-500">
-                          {isGroup ? `${room.participants.length} members` : 'Private'}
+                          {isGroup ? t('membersCount', { count: room.participants.length }) : t('private')}
                         </p>
                       </div>
                     </button>
@@ -312,16 +318,16 @@ export default function ChatDrawer() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Select a chat</p>
+                  <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t('selectChat')}</p>
                   <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
-                    Or join the Community Chat to get started
+                    {t('selectChatHint')}
                   </p>
                 </div>
                 <button
                   onClick={openCommunityChat}
                   className="mt-2 rounded-xl bg-zinc-900 px-5 py-2 text-sm font-semibold text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900"
                 >
-                  🌐 Join Community Chat
+                  🌐 {t('joinCommunityChat')}
                 </button>
               </div>
             ) : (
@@ -333,12 +339,12 @@ export default function ChatDrawer() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-zinc-900 dark:text-white">
-                      {roomLabel(activeRoom, user!._id)}
+                      {roomLabel(activeRoom, user!._id, t)}
                     </p>
                     <p className="text-xs text-zinc-400 dark:text-zinc-500">
                       {activeRoom.type === 'GROUP'
-                        ? `${activeRoom.participants.length} members`
-                        : 'Private chat'}
+                        ? t('membersCount', { count: activeRoom.participants.length })
+                        : t('privateChat')}
                     </p>
                   </div>
                 </div>
@@ -347,7 +353,7 @@ export default function ChatDrawer() {
                 <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
                   {localMessages.length === 0 ? (
                     <p className="pt-8 text-center text-xs text-zinc-400 dark:text-zinc-500">
-                      No messages yet. Say hello!
+                      {t('noMessagesYet')}
                     </p>
                   ) : (
                     localMessages.map((msg) => {
@@ -372,7 +378,7 @@ export default function ChatDrawer() {
                               {msg.content}
                             </div>
                             <span className="mx-1 text-[10px] text-zinc-400 dark:text-zinc-500">
-                              {timeLabel(msg.createdAt)}
+                              {timeLabel(msg.createdAt, t, router.locale)}
                             </span>
                           </div>
                         </div>
@@ -412,7 +418,7 @@ export default function ChatDrawer() {
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
                     }}
-                    placeholder="Type a message…"
+                    placeholder={t('typeMessage')}
                     className="flex-1 rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-2 text-sm outline-none transition focus:border-zinc-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-zinc-500 dark:focus:bg-zinc-800"
                   />
                   <button
