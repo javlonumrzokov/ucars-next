@@ -2,26 +2,13 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/contexts/auth-context';
-import { useChat } from '@/contexts/chat-context';
+import { useChat, type ChatParticipant as Participant, type ChatRoom } from '@/contexts/chat-context';
 import { authStorage } from '@/lib/auth-storage';
 import {
   MESSAGES_QUERY,
   MY_CHAT_ROOMS_QUERY,
   SEND_MESSAGE_MUTATION,
 } from '@/lib/graphql/queries';
-
-interface Participant {
-  _id: string;
-  name: string;
-}
-
-interface ChatRoom {
-  _id: string;
-  type: 'PRIVATE' | 'GROUP';
-  name?: string;
-  participants: Participant[];
-  lastMessageAt: string;
-}
 
 interface Message {
   _id: string;
@@ -116,18 +103,19 @@ export default function ChatDrawer() {
   // Only fetch if we don't already have messages cached for this room
   const hasCached = effectiveRoomId ? (roomMessages[effectiveRoomId]?.length ?? 0) > 0 : false;
 
-  const { refetch: refetchMessages } = useQuery<{
+  const { data: messagesData, refetch: refetchMessages } = useQuery<{
     messages: { items: Message[]; total: number; totalPages: number };
   }>(MESSAGES_QUERY, {
     variables: { roomId: effectiveRoomId, page: 1, limit: 5 },
     skip: !effectiveRoomId || !isAuthenticated || hasCached,
     fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      if (!effectiveRoomId) return;
-      const items = [...(data.messages?.items ?? [])].reverse();
-      setRoomMessages(effectiveRoomId, items);
-    },
   });
+
+  useEffect(() => {
+    if (!effectiveRoomId || !messagesData) return;
+    const items = [...(messagesData.messages?.items ?? [])].reverse();
+    setRoomMessages(effectiveRoomId, items);
+  }, [messagesData, effectiveRoomId]);
 
   const [sendMessage, { loading: sending }] = useMutation(SEND_MESSAGE_MUTATION, {
     onCompleted: () => {

@@ -37,15 +37,15 @@ function StatCard({ label, value, icon, color, href }: StatCardProps) {
 }
 
 export default function AdminDashboard() {
-  const { data: usersData } = useQuery(ADMIN_USERS_QUERY, {
+  const { data: usersData } = useQuery<{ adminUsers: { total: number } }>(ADMIN_USERS_QUERY, {
     variables: { page: 1, limit: 1 },
     fetchPolicy: 'network-only',
   });
-  const { data: vehiclesData } = useQuery(ADMIN_VEHICLES_QUERY, {
+  const { data: vehiclesData } = useQuery<{ adminVehicles: { total: number } }>(ADMIN_VEHICLES_QUERY, {
     variables: { page: 1, limit: 1 },
     fetchPolicy: 'network-only',
   });
-  const { data: articlesData } = useQuery(ADMIN_ARTICLES_QUERY, {
+  const { data: articlesData } = useQuery<{ adminArticles: { total: number } }>(ADMIN_ARTICLES_QUERY, {
     variables: { page: 1, limit: 1 },
     fetchPolicy: 'network-only',
   });

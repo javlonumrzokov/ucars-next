@@ -12,7 +12,7 @@ export interface ChatParticipant {
 
 export interface ChatRoom {
   _id: string;
-  type: string;
+  type: 'PRIVATE' | 'GROUP';
   name?: string;
   participants: ChatParticipant[];
   lastMessageAt: string;
