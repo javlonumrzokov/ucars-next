@@ -25,6 +25,8 @@ import {
 } from '@/lib/graphql/queries';
 import type { Article, Vehicle } from '@/types';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_WS_URL ?? 'http://localhost:4000';
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface UserPublicInfo { _id: string; name: string; email: string; role: string; avatar?: string | null; }
@@ -107,14 +109,14 @@ function CreateArticleForm({ onDone }: { onDone: () => void }) {
       const token = typeof window !== 'undefined' ? localStorage.getItem('ucar.token') : null;
       const fd = new FormData();
       fd.append('file', file);
-      const res = await fetch('http://localhost:4000/upload/image', {
+      const res = await fetch(`${API_BASE_URL}/upload/image`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: fd,
       });
       if (!res.ok) throw new Error('Upload failed');
       const data = await res.json();
-      setCoverImage(`http://localhost:4000${data.url}`);
+      setCoverImage(`${API_BASE_URL}${data.url}`);
     } catch {
       setError('Image upload failed. Please try again.');
     } finally {
@@ -242,14 +244,14 @@ function CreateVehicleForm({ onDone }: { onDone: () => void }) {
       for (const file of files) {
         const fd = new FormData();
         fd.append('file', file);
-        const res = await fetch('http://localhost:4000/upload/image', {
+        const res = await fetch(`${API_BASE_URL}/upload/image`, {
           method: 'POST',
           headers: token ? { Authorization: `Bearer ${token}` } : {},
           body: fd,
         });
         if (!res.ok) throw new Error('Upload failed');
         const data = await res.json();
-        urls.push(`http://localhost:4000${data.url}`);
+        urls.push(`${API_BASE_URL}${data.url}`);
       }
       setUploadedImages((prev) => [...prev, ...urls]);
     } catch {
